@@ -73,7 +73,7 @@ class Idx:
 
     async def get_symbol_prices(self, session, symbol, param):
         print(symbol)
-        url = "https://www.miraeasset.co.id/tr/cpstChartAjaxTR.do?StockCode={0}&periodBit={1}".format(symbol, param['Interval'])
+        url = "https://hots.miraeasset.co.id/tr/cpstChartAjaxTR.do?StockCode={0}&periodBit={1}".format(symbol, param['Interval'])
         async with session.get(url) as response:
             return await response.read()
 
