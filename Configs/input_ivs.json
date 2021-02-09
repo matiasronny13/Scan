@@ -31,10 +31,10 @@
       "Indicators": ["OBV"]
     }
   ],
-  "Symbols-": [
+  "Symbols": [
     {"symbol": "NYSE_FCX 8281", "full_name": "NYSE:FCX", "ticker": "15304"}
   ],
-  "Query": {"ticker": {"$in": ["942487"]}},
+  "Query-": {"ticker": {"$in": ["942487"]}},
   "Query-": {"$and": [{"symbol": {"$regex": "SGD", "$options":"i"}}, {"type": "Forex"}, {"exchange": ""}]},
   "Query-": {"type": "Index"},
   "Query-": {"$and": [{"symbol": {"$regex": "A", "$options":"i"}}, {"type": "Stock"}, {"exchange": "NASDAQ"}]},

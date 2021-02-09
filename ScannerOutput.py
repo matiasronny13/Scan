@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from mpl_finance import candlestick_ohlc
+import mplfinance as mpf
 import matplotlib.dates as mdates
 from pandas.plotting import register_matplotlib_converters
 import numpy as np
