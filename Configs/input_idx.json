@@ -1,0 +1,32 @@
+{
+  "Exchange": "idx",
+  "Interval": "1w",
+  "CountLimit": 200,
+  "Symbols": [
+    "ADHI","AIMS","ASRI","BBTN","BMRI","BMTR","BNGA","BTPN","HMSP","HRTA","IKBI","INAI","LINK","MAIN","MASA","MDLN","MLPT","MTRA","PNIN","PNLF","PTPP","PWON","RODA","SMRA","WSBP","WSKT","WTON"
+  ],
+  "ComputedIndicators":["SAR", "MACD", "BBANDS", "EMA", "CCI"],
+  "Depth": {
+    "Visible": "false",
+    "Zoom": "1",
+    "BottomThresholdPercentage": "3"
+  },
+  "Strategy": {
+    "Name": "MACD_REV",
+    "TickCount": 4
+  },
+  "Subplots": [
+    {
+      "Axes": "default",
+      "Indicators": ["CANDLESTICK", "BBANDS", "SAR", "EMA"]
+    },
+    {
+      "Axes": "ax1",
+      "Indicators": ["MACD"]
+    },
+    {
+      "Axes": "ax1",
+      "Indicators": ["CCI"]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "Exchange": "ond",
+  "Interval": "1w",
+  "CountLimit": 200,
+  "Symbols": [
+  ],
+  "ComputedIndicators":["SAR", "MACD", "BBANDS", "EMA", "CCI"],
+  "Depth": {
+    "Visible": "false",
+    "Zoom": "1",
+    "BottomThresholdPercentage": "3"
+  },
+  "Strategy": {
+    "Name": "",
+    "TickCount": 2
+  },
+  "Subplots": [
+    {
+      "Axes": "default",
+      "Indicators": ["CANDLESTICK", "BBANDS", "SAR", "EMA"]
+    },
+    {
+      "Axes": "ax1",
+      "Indicators": ["MACD"]
+    },
+    {
+      "Axes": "ax2",
+      "Indicators": ["CCI"]
+    }
+  ]
+}
