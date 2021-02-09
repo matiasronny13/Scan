@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import mplfinance as mpf
 import matplotlib.dates as mdates
+from mplfinance.original_flavor import candlestick_ohlc
 from pandas.plotting import register_matplotlib_converters
 import numpy as np
 from AppConstants import INDICATORS
