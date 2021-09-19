@@ -64,20 +64,9 @@ class Ivs:
                 else:
                     print('HITS NOT FOUND')
 
-        query = [str(a["pair_ID"]) for a in all_hits]
-        result = self.get_all_symbols({"ticker": {"$in": query}})
-        print("Found {0} / {1}".format(len(result), len(all_hits)))
-
-        # find missing tickers
-        result_tickers = [r['ticker'] for r in result]
-        missing = set(query) - set(result_tickers)
-        print("Missing Tickers: ")
-        if len(missing) == 0:
-            print("NA")
-        else:
-            for m in missing:
-                print(list(filter(lambda x: x['pair_ID'] == int(m), all_hits)))
-            print("---------------------------------------------------------------------------------------------------")
+        result = [{"ticker": str(a["pair_ID"]),
+                   "symbol": "{0}_{1} {2}".format(a["exchange_trans"], a["stock_symbol"], str(a["pair_ID"]))} for a in
+                  all_hits]
 
         return result
 
