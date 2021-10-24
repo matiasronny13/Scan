@@ -114,7 +114,7 @@ class Output:
             y = asset.klines.iloc[index].high
             ax.annotate(str(quote.date),
                     xy=(x, y), xycoords='data',
-                    xytext=(x, y + .02),
+                    xytext=(x, y + (y * .1)),
                     size=10,
                     bbox=dict(boxstyle="round4,pad=.5", facecolor="yellow"),
                     arrowprops=dict(facecolor='orange', shrink=0.05))
