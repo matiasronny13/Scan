@@ -6,7 +6,8 @@ from aiohttp import ClientSession
 from datetime import datetime, timedelta
 import math
 from pymongo import MongoClient
-import requests
+import http.client
+import json
 
 class Ivs:
     def __init__(self):
@@ -35,28 +36,27 @@ class Ivs:
         result = []
         query = []
         all_hits = []
-        url = "https://www.investing.com/stock-screener/Service/SearchStocks"
+        page = 1
 
+        conn = http.client.HTTPSConnection("www.investing.com")
         payload = param['Filter'] + "&pn={0}&order[col]=viewData.symbol&order[dir]=a"
         headers = {
-            'accept': "application/json, text/javascript, */*; q=0.01",
-            'origin': "https://www.investing.com",
-            'x-requested-with': "XMLHttpRequest",
-            'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36",
-            'sec-fetch-mode': "cors",
-            'content-type': "application/x-www-form-urlencoded",
-            'cache-control': "no-cache"
+            'content-type': 'application/x-www-form-urlencoded',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36 Edg/110.0.1587.56',
+            'x-requested-with': 'XMLHttpRequest'
         }
+        conn.request("POST", "/stock-screener/Service/SearchStocks", payload.format(page), headers)
+        res = conn.getresponse()
+        data = res.read()
+        temp = data.decode("utf-8")
 
-        page = 1
-        temp = requests.request("POST", url, data=payload.format(page), headers=headers)
         if temp is not None:
-            response = temp.json()
+            response = json.loads(temp)
             total = int(response['totalCount'])
             total_page = math.ceil(total / 50)
             print("Total Hits: ", total)
             print("Total Pages: ", total_page)
-            coro_result = self.loop_all_symbols(self.coro_scanner, list(range(1, total_page + 1)), {"payload": payload, "headers": headers, "url": url})
+            coro_result = self.loop_all_symbols(self.coro_scanner, list(range(1, total_page + 1)), {"payload": payload, "headers": headers, "url": "https://www.investing.com/stock-screener/Service/SearchStocks"})
 
             for h in coro_result:
                 if 'hits' in h:
@@ -76,7 +76,7 @@ class Ivs:
 
         if param.__contains__('Symbols') and isinstance(param['Symbols'], list) and len(param['Symbols']) > 0:
             allSymbols = self.convert_to_symbols(param['Symbols'])
-        if param.__contains__('Filter') and param['Filter'] is not None:
+        elif param.__contains__('Filter') and param['Filter'] is not None:
             allSymbols = self.get_from_screener(param)
         else:
             allSymbols = self.get_all_symbols(param['Query'])
