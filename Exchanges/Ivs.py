@@ -33,8 +33,6 @@ class Ivs:
                 return result
 
     def get_from_screener(self, param):
-        result = []
-        query = []
         all_hits = []
         page = 1
 
