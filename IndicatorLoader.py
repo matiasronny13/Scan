@@ -36,19 +36,21 @@ class IndicatorLoader:
                     self.load_obv(asset)
                 elif indicatorName == AppConstants.INDICATORS.SPRS.name:
                     self.support_resistance(asset)
-                elif indicatorName == AppConstants.INDICATORS.TRIPLE_MA.name:
-                    self.triple_moving_average(asset)
+                elif indicatorName == AppConstants.INDICATORS.MA.name:
+                    self.moving_average(asset, [50, 100, 200])
 
     def get_count(self, param, klines):
         print(param.y)
         return len(klines[(klines.low <= param.y) & (param.y <= klines.high)])
 
-    def triple_moving_average(self, asset):
-        ma1 = ta.MA(asset.klines.close, timeperiod=50, matype=0)
-        ma2 = ta.MA(asset.klines.close, timeperiod=100, matype=0)
-        ma3 = ta.MA(asset.klines.close, timeperiod=200, matype=0)
-        df = pd.DataFrame({'ma1': ma1, 'ma2': ma2, 'ma3': ma3})
-        asset.indicators.update({AppConstants.INDICATORS.TRIPLE_MA.name: df})
+    def moving_average(self, asset, periods):
+        df = {}
+        if periods:
+            for i in range(len(periods)):
+                ma = ta.MA(asset.klines.close, timeperiod=periods[i], matype=0)
+                df[f'ma{i}'] = ma
+        df = pd.DataFrame(df)
+        asset.indicators.update({AppConstants.INDICATORS.MA.name: df})
 
     def support_resistance(self, asset):
         maxima = asset.klines.high.max() * 100

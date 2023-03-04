@@ -1,9 +1,9 @@
 {
   "Exchange": "ivs",
-  "Interval": "M",
-  "CountLimit": 250,
+  "Interval": "W",
+  "CountLimit": 300,
 
-  "ComputedIndicators":["SAR", "MACD", "BBANDS", "TRIPLE_MA", "CCI", "OBV"],
+  "ComputedIndicators":["SAR", "MACD", "BBANDS", "MA", "CCI", "OBV"],
   "Depth": {
     "Visible": "false",
     "Zoom": "1",
@@ -16,7 +16,7 @@
   "Subplots": [
     {
       "Axes": "default",
-      "Indicators": ["CANDLESTICK", "BBANDS", "SAR", "TRIPLE_MA"]
+      "Indicators": ["CANDLESTICK", "BBANDS", "SAR", "MA"]
     },
     {
       "Axes": "ax1",

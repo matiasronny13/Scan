@@ -37,6 +37,6 @@ class INDICATORS(Enum):
     ANNO_CDLABANDONEDBABY = 13,
     OBV = 14,
     SPRS = 15,
-    TRIPLE_MA = 16
+    MA = 16
 
 
