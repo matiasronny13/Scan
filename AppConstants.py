@@ -36,6 +36,7 @@ class INDICATORS(Enum):
     ANNO_CDLEVENINGSTAR = 12,
     ANNO_CDLABANDONEDBABY = 13,
     OBV = 14,
-    SPRS = 15
+    SPRS = 15,
+    TRIPLE_MA = 16
 
 

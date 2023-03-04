@@ -3,7 +3,7 @@
   "Interval": "M",
   "CountLimit": 250,
 
-  "ComputedIndicators":["SAR", "MACD", "BBANDS", "EMA", "CCI", "OBV"],
+  "ComputedIndicators":["SAR", "MACD", "BBANDS", "TRIPLE_MA", "CCI", "OBV"],
   "Depth": {
     "Visible": "false",
     "Zoom": "1",
@@ -16,7 +16,7 @@
   "Subplots": [
     {
       "Axes": "default",
-      "Indicators": ["CANDLESTICK", "BBANDS", "SAR", "EMA"]
+      "Indicators": ["CANDLESTICK", "BBANDS", "SAR", "TRIPLE_MA"]
     },
     {
       "Axes": "ax1",
@@ -32,7 +32,7 @@
     }
   ],
   "Symbols": [
-    {"symbol": "NYSE_FCX 8281", "full_name": "NYSE:FCX", "ticker": "15304"}
+    {"symbol": "NYSE_FCX 8281", "full_name": "NYSE:FCX", "ticker": "8281"}
   ],
   "Query-": {"ticker": {"$in": ["942487"]}},
   "Query-": {"$and": [{"symbol": {"$regex": "SGD", "$options":"i"}}, {"type": "Forex"}, {"exchange": ""}]},

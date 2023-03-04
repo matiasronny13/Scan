@@ -119,6 +119,12 @@ class Output:
                     bbox=dict(boxstyle="round4,pad=.5", facecolor="yellow"),
                     arrowprops=dict(facecolor='orange', shrink=0.05))
 
+    def draw_triple_ma(self, asset, ax):
+        data = asset.indicators[INDICATORS.TRIPLE_MA.name]
+        ax.plot(asset.klines.index, data.ma1)
+        ax.plot(asset.klines.index, data.ma2)
+        ax.plot(asset.klines.index, data.ma3)
+
     def draw_indicators(self, asset, ax, config):
         for indicator_name in config:
             if indicator_name == INDICATORS.CANDLESTICK.name:
@@ -151,6 +157,8 @@ class Output:
                 self.draw_obv(asset, ax)
             elif indicator_name == INDICATORS.SPRS.name:
                 self.draw_support_resistance(asset, ax)
+            elif indicator_name == INDICATORS.TRIPLE_MA.name:
+                self.draw_triple_ma(asset, ax)
 
 
     def draw_axes(self, axes, asset, config):
