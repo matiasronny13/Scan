@@ -9,4 +9,5 @@ pymongo==4.3.3
 python_binance==1.0.17
 requests==2.28.2
 stocktrends==0.1.5
-TA_Lib==0.4.25
+TA-Lib @ file:///C:/Data/Python/Scan/TA_Lib-0.4.25-cp311-cp311-win_amd64.whl
+Twisted @ file:///C:/Data/Python/Scan/Twisted-16.6.0-cp311-cp311-win_amd64.whl
