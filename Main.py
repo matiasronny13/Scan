@@ -6,6 +6,7 @@ import Exchanges.Yho as Yho
 import Exchanges.Iex as Iex
 import Exchanges.Ond as Ond
 import Exchanges.Ivs as Ivs
+import Exchanges.Mkw as Mkw
 from Scanner import Scanner
 from ScannerOutput import Output
 from IndicatorLoader import IndicatorLoader
@@ -15,7 +16,7 @@ class ChartScanner:
 
     def main(self):
         print('Start main...')
-        with open('Configs/input_ivs.json', 'r') as f:
+        with open('Configs/input_mkw.json', 'r') as f:
             input_config = json.load(f)
 
         # set exchange
@@ -31,6 +32,8 @@ class ChartScanner:
             exchange = Ond.Ond()
         elif input_config['Exchange'] == 'ivs':
             exchange = Ivs.Ivs()
+        elif input_config['Exchange'] == 'mkw':
+            exchange = Mkw.Mkw()
         else:
             exchange = Idx.Idx()
 
