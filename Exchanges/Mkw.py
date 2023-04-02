@@ -82,32 +82,33 @@ class Mkw:
                 if("error" in response):
                     print("ERROR: " + response["error"])
                 else:
-                    ticksDf = pd.DataFrame(response["TimeInfo"]["Ticks"], columns=['tick'])
-                    ohlcDf = pd.DataFrame(response["Series"][0]["DataPoints"], columns=["open", "high", "low", "close"])
-                    volDf = pd.DataFrame(response["Series"][1]["DataPoints"], columns=["vol"])
+                    if (response["TimeInfo"]["Ticks"] is not None):
+                        ticksDf = pd.DataFrame(response["TimeInfo"]["Ticks"], columns=['tick'])
+                        ohlcDf = pd.DataFrame(response["Series"][0]["DataPoints"], columns=["open", "high", "low", "close"])
+                        volDf = pd.DataFrame(response["Series"][1]["DataPoints"], columns=["vol"])
 
-                    firstJoinDf = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
-                    df = firstJoinDf.join(volDf, lsuffix="_left", rsuffix="_right", how="left")
+                        firstJoinDf = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
+                        df = firstJoinDf.join(volDf, lsuffix="_left", rsuffix="_right", how="left")
 
-                    if df.isin(['n/a']).values.any():
-                        df = df.replace('n/a', 0)
+                        if df.isin(['n/a']).values.any():
+                            df = df.replace('n/a', 0)
 
-                    df.columns = ["date", "open", "high", "low", "close", "vol"]
-                    df = df.reset_index()
-                    df['index'] = df.index
+                        df.columns = ["date", "open", "high", "low", "close", "vol"]
+                        df = df.reset_index()
+                        df['index'] = df.index
 
-                    # formatting column
-                    df.date = pd.to_datetime(df.date, unit='ms')
-                    df.open = df.open.astype(float)
-                    df.high = df.high.astype(float)
-                    df.low = df.low.astype(float)
-                    df.close = df.close.astype(float)
-                    df.vol = df.vol.astype(float)
+                        # formatting column
+                        df.date = pd.to_datetime(df.date, unit='ms')
+                        df.open = df.open.astype(float)
+                        df.high = df.high.astype(float)
+                        df.low = df.low.astype(float)
+                        df.close = df.close.astype(float)
+                        df.vol = df.vol.astype(float)
 
-                    df['is_up'] = df.open - df.close <= 0
+                        df['is_up'] = df.open - df.close <= 0
 
-                    asset = Asset(klineSymbol, df, param['Step'])
-                    result.append(asset)
+                        asset = Asset(klineSymbol, df, param['Step'])
+                        result.append(asset)
 
         self.all_asset_dataframe = result
         return result
@@ -116,11 +117,11 @@ class Mkw:
         pass
 
     def get_key(self, input, param):
-        #result = "STOCK"
-        #result += "/" + input["country"][0:2]
-        #result += "/" + param["ExchangeMapping"][input["exchange"]]
-        #result += "/" + input["symbol"]
-        return input["symbol"]
+        result = "STOCK"
+        result += "/" + param["CountryMapping"][input["country"]]
+        result += "/" + param["ExchangeMapping"][input["exchange"]]
+        result += "/" + input["symbol"]
+        return result
 
     async def get_symbol_prices(self, session, symbol, param):
         print(symbol)
