@@ -130,6 +130,18 @@ class Mkw:
         payload = {
                     "Step": param['Step'],
                     "TimeFrame": param['TimeFrame'],
+                    "IncludeMockTick": "true",
+                    "FilterNullSlots": "false",
+                    "FilterClosedPoints": "true",
+                    "IncludeClosedSlots": "false",
+                    "IncludeOfficialClose": "true",
+                    "InjectOpen": "false",
+                    "ShowPreMarket": "false",
+                    "ShowAfterHours": "false",
+                    "UseExtendedTimeFrame": "true",
+                    "WantPriorClose": "false",
+                    "IncludeCurrentQuotes": "false",
+                    "ResetTodaysAfterHoursPercentChange": "false",
                     "Series": [{
                             "Key": self.get_key(symbol, param),
                             "Dialect": "Charting",
