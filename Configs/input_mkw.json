@@ -1,7 +1,7 @@
 {
   "Exchange": "mkw",
   "Step": "P7D",
-  "TimeFrame": "P1Y",
+  "TimeFrame": "P2Y",
   "ExchangeMapping": {
     "NYSE": "XNYS",
     "NASDAQ": "XNAS",
@@ -12,14 +12,14 @@
     "USA": "US",
     "Indonesia": "ID"
   },
-  "ComputedIndicators":["SAR", "MACD", "BBANDS", "MA", "CCI", "OBV"],
+  "ComputedIndicators":["SAR", "MACD", "BBANDS", "MA", "OBV"],
   "Depth": {
     "Visible": "false",
     "Zoom": "1",
     "BottomThresholdPercentage": "3"
   },
   "Strategy": {
-    "Name": "BB_REV",
+    "Name": "ALL_NEGATIVE",
     "TickCount": 2
   },
   "Subplots": [
@@ -33,16 +33,12 @@
     },
     {
       "Axes": "ax2",
-      "Indicators": ["CCI"]
-    },
-    {
-      "Axes": "ax3",
       "Indicators": ["OBV"]
     }
   ],
   "Symbols-": [
-    {"symbol": "FCX"}, {"symbol": "AAPL"}
+    {"symbol": "AAPL", "country": "USA", "exchange": "NASDAQ"}
   ],
-  "Filter-US": "country%5B%5D=5&sector=36%2C25%2C27%2C28%2C24%2C29%2C35%2C30%2C26%2C34%2C33%2C31%2C32&industry=182%2C190%2C204%2C199%2C212%2C177%2C172%2C207%2C214%2C217%2C179%2C184%2C203%2C181%2C185%2C197%2C222%2C215%2C220%2C202%2C200%2C187%2C229%2C209%2C210%2C192%2C195%2C193%2C228%2C206%2C218%2C205%2C208%2C194%2C183%2C196%2C178%2C230%2C225%2C223%2C216%2C173%2C174%2C180%2C188%2C201%2C211%2C232%2C186%2C226%2C175%2C227%2C231%2C213%2C219%2C198%2C221%2C191%2C189%2C176%2C224&equityType=ORD%2CDRC%2CPreferred%2CUnit%2CClosedEnd%2CREIT%2CELKS%2COpenEnd%2CRight%2CParticipationShare%2CCapitalSecurity%2CPerpetualCapitalSecurity%2CGuaranteeCertificate%2CIGC%2CWarrant%2CSeniorNote%2CDebenture%2CETF%2CADR%2CETC&exchange%5B%5D=2&avg_volume%5Bmin%5D=1500000&avg_volume%5Bmax%5D=706958080&last%5Bmin%5D=10&last%5Bmax%5D=400&MACD%5Bmin%5D=-1187.555&MACD%5Bmax%5D=0&pn=1&order%5Bcol%5D=last&order%5Bdir%5D=d",
-  "Filter": "country%5B%5D=48&sector=36%2C25%2C27%2C28%2C24%2C29%2C35%2C30%2C26%2C34%2C33%2C31%2C32&industry=182%2C190%2C204%2C199%2C212%2C177%2C172%2C207%2C214%2C217%2C179%2C184%2C203%2C181%2C185%2C197%2C222%2C215%2C220%2C202%2C200%2C187%2C229%2C209%2C210%2C192%2C195%2C193%2C228%2C206%2C218%2C205%2C208%2C194%2C183%2C196%2C178%2C230%2C225%2C223%2C216%2C173%2C174%2C180%2C188%2C201%2C211%2C232%2C186%2C226%2C175%2C227%2C231%2C213%2C219%2C198%2C221%2C191%2C189%2C176%2C224&equityType=ORD%2CDRC%2CPreferred%2CUnit%2CClosedEnd%2CREIT%2CELKS%2COpenEnd%2CRight%2CParticipationShare%2CCapitalSecurity%2CPerpetualCapitalSecurity%2CGuaranteeCertificate%2CIGC%2CWarrant%2CSeniorNote%2CDebenture%2CETF%2CADR%2CETC&avg_volume%5Bmin%5D=1000000&avg_volume%5Bmax%5D=3738157970&last%5Bmin%5D=50&last%5Bmax%5D=39400&MACD%5Bmin%5D=-1066.677&MACD%5Bmax%5D=0&pn=1&order%5Bcol%5D=last&order%5Bdir%5D=d"
+  "Filter": "country%5B%5D=5&sector=36%2C25%2C27%2C28%2C24%2C29%2C35%2C30%2C26%2C34%2C33%2C31%2C32&industry=182%2C190%2C204%2C199%2C212%2C177%2C172%2C207%2C214%2C217%2C179%2C184%2C203%2C181%2C185%2C197%2C222%2C215%2C220%2C202%2C200%2C187%2C229%2C209%2C210%2C192%2C195%2C193%2C228%2C206%2C218%2C205%2C208%2C194%2C183%2C196%2C178%2C230%2C225%2C223%2C216%2C173%2C174%2C180%2C188%2C201%2C211%2C232%2C186%2C226%2C175%2C227%2C231%2C213%2C219%2C198%2C221%2C191%2C189%2C176%2C224&equityType=ORD%2CDRC%2CPreferred%2CUnit%2CClosedEnd%2CREIT%2CELKS%2COpenEnd%2CRight%2CParticipationShare%2CCapitalSecurity%2CPerpetualCapitalSecurity%2CGuaranteeCertificate%2CIGC%2CWarrant%2CSeniorNote%2CDebenture%2CETF%2CADR%2CETC&avg_volume%5Bmin%5D=127810&avg_volume%5Bmax%5D=706958080&last%5Bmin%5D=10.48&last%5Bmax%5D=211.02&eq_eps%5Bmin%5D=-5430000000&eq_eps%5Bmax%5D=2&pn=1&order%5Bcol%5D=eq_market_cap&order%5Bdir%5D=d",
+  "Filter-id": "country%5B%5D=48&sector=36%2C25%2C27%2C28%2C24%2C29%2C35%2C30%2C26%2C34%2C33%2C31%2C32&industry=182%2C190%2C204%2C199%2C212%2C177%2C172%2C207%2C214%2C217%2C179%2C184%2C203%2C181%2C185%2C197%2C222%2C215%2C220%2C202%2C200%2C187%2C229%2C209%2C210%2C192%2C195%2C193%2C228%2C206%2C218%2C205%2C208%2C194%2C183%2C196%2C178%2C230%2C225%2C223%2C216%2C173%2C174%2C180%2C188%2C201%2C211%2C232%2C186%2C226%2C175%2C227%2C231%2C213%2C219%2C198%2C221%2C191%2C189%2C176%2C224&equityType=ORD%2CDRC%2CPreferred%2CUnit%2CClosedEnd%2CREIT%2CELKS%2COpenEnd%2CRight%2CParticipationShare%2CCapitalSecurity%2CPerpetualCapitalSecurity%2CGuaranteeCertificate%2CIGC%2CWarrant%2CSeniorNote%2CDebenture%2CETF%2CADR%2CETC&avg_volume%5Bmin%5D=38520&avg_volume%5Bmax%5D=3738157970&eq_market_cap%5Bmin%5D=55570000000&eq_market_cap%5Bmax%5D=1078660000000000&eq_revenue%5Bmin%5D=150060000&eq_revenue%5Bmax%5D=301379000000000&pn=1&order%5Bcol%5D=eq_market_cap&order%5Bdir%5D=d"
 }

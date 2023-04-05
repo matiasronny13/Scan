@@ -18,7 +18,8 @@ class StrategyCode(Enum):
     SAR_BREAK = 10,
     BB_BREAK = 11,
     SAR_REV_BEAR = 12,
-    GAP = 13
+    GAP = 13,
+    ALL_NEGATIVE = 14
 
 
 class INDICATORS(Enum):

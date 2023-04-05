@@ -162,6 +162,15 @@ class Scanner:
         else:
             return False
 
+    def all_negative(self, asset, strategy):
+        sar = asset.indicators[INDICATORS.SAR.name]
+        bb = asset.indicators[INDICATORS.BBANDS.name]
+        if self.macd_negative(asset):
+            high = asset.klines.iloc[-1].high
+            if high < bb.iloc[-1].middle and high < sar.iloc[-1].real:
+                return True
+        return False
+
     def scan(self, strategy):
         for asset in self.assetList:
             if len(asset.klines) > 5:
@@ -191,6 +200,8 @@ class Scanner:
                     asset.is_displayed = self.sar_rev_bear(asset, strategy)
                 elif strategy["Name"] == StrategyCode.GAP.name:
                     asset.is_displayed = self.gap(asset, strategy)
+                elif strategy["Name"] == StrategyCode.ALL_NEGATIVE.name:
+                    asset.is_displayed = self.all_negative(asset, strategy)
                 else:
                     asset.is_displayed = True
 
