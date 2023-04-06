@@ -1,11 +1,8 @@
 import pandas as pd
-import json
 from Models.Asset import Asset
 import asyncio
 from aiohttp import ClientSession
-from datetime import datetime, timedelta
 import math
-from pymongo import MongoClient
 import http.client
 import json
 
@@ -82,7 +79,7 @@ class Mkw:
                 if("error" in response):
                     print("ERROR: " + response["error"])
                 else:
-                    if (response["TimeInfo"]["Ticks"] is not None):
+                    if (response["TimeInfo"]["Ticks"] is not None and response["Series"][0]["DataPoints"][0] != [None, None, None, None]):
                         ticksDf = pd.DataFrame(response["TimeInfo"]["Ticks"], columns=['tick'])
                         ohlcDf = pd.DataFrame(response["Series"][0]["DataPoints"], columns=["open", "high", "low", "close"])
                         volDf = pd.DataFrame(response["Series"][1]["DataPoints"], columns=["vol"])
@@ -90,8 +87,8 @@ class Mkw:
                         firstJoinDf = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
                         df = firstJoinDf.join(volDf, lsuffix="_left", rsuffix="_right", how="left")
 
-                        if df.isin(['n/a']).values.any():
-                            df = df.replace('n/a', 0)
+                        if df.isnull().values.any():
+                            df = df.fillna(0)
 
                         df.columns = ["date", "open", "high", "low", "close", "vol"]
                         df = df.reset_index()
