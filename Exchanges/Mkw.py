@@ -54,12 +54,14 @@ class Mkw:
         result = [{
                        "exchange": a["exchange_trans"],
                        "country": a["viewData"]["flag"],
-                       "symbol": a["viewData"]["symbol"]
+                       "symbol": a["viewData"]["symbol"] if "_" not in a["viewData"]["symbol"] else self.cleanup_fund_symbol(a["viewData"]["symbol"])
                    } for a in
                   all_hits]
 
         return result
 
+    def cleanup_fund_symbol(self, input):
+        return input.split("_")[0]
 
     def get_all_dataframe(self, param):
         result = []
