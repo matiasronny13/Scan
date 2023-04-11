@@ -87,6 +87,9 @@ class Mkw:
                         firstJoinDf = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
                         df = firstJoinDf.join(volDf, lsuffix="_left", rsuffix="_right", how="left")
 
+                        #remove row where all columns are null
+                        df = df[df.open.notna() & df.high.notna() & df.low.notna() & df.close.notna() & df.vol.notna()]
+
                         if df.isnull().values.any():
                             df = df.fillna(0)
 
