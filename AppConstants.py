@@ -41,3 +41,8 @@ class INDICATORS(Enum):
     MA = 16
 
 
+class CHART_TYPE(Enum):
+    OHLC = 0,
+    HEIKIN_ASHI = 1
+
+

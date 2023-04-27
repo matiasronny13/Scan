@@ -1,4 +1,5 @@
 import pandas as pd
+import AppConstants
 from Models.Asset import Asset
 import asyncio
 from aiohttp import ClientSession
@@ -84,6 +85,8 @@ class Mkw:
                     if (response["TimeInfo"]["Ticks"] is not None and response["Series"][0]["DataPoints"][0] != [None, None, None, None]):
                         ticksDf = pd.DataFrame(response["TimeInfo"]["Ticks"], columns=['tick'])
                         ohlcDf = pd.DataFrame(response["Series"][0]["DataPoints"], columns=["open", "high", "low", "close"])
+                        if param["ChartType"] == AppConstants.CHART_TYPE.HEIKIN_ASHI.name:
+                            ohlcDf = self.heikin_ashi(ohlcDf)
                         volDf = pd.DataFrame(response["Series"][1]["DataPoints"], columns=["vol"])
 
                         firstJoinDf = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
@@ -114,6 +117,18 @@ class Mkw:
 
         self.all_asset_dataframe = result
         return result
+
+    def heikin_ashi(self, ohlc_df) -> pd.DataFrame:
+        df = ohlc_df.copy()
+        df['close'] = round(((ohlc_df['open'] + ohlc_df['high'] + ohlc_df['low'] + ohlc_df['close']) / 4), 2)
+        for i in range(len(ohlc_df)):
+            if i == 0:
+                df.iloc[0, 0] = round(((ohlc_df['open'].iloc[0] + ohlc_df['close'].iloc[0]) / 2), 2)
+            else:
+                df.iat[i, 0] = round(((df.iat[i - 1, 0] + df.iat[i - 1, 3]) / 2), 2)
+        df['high'] = df.loc[:, ['open', 'close']].join(ohlc_df['high']).max(axis=1)
+        df['low'] = df.loc[:, ['open', 'close']].join(ohlc_df['low']).min(axis=1)
+        return df
 
     def get_all_depths(self, bottom_limit):
         pass
