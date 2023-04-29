@@ -1,88 +1,152 @@
+import datetime
+
 import pandas as pd
-import json
+import AppConstants
 from Models.Asset import Asset
-import pandas_datareader.data as web
 import asyncio
+from aiohttp import ClientSession
 from datetime import datetime, timedelta
+import json
+import httpx
+from Utils import Utils
 
 class Yho:
-    def __init__(self):
-        json_key = json.load(open('Exchanges/api.json'))
-        self.all_asset_dataframe = None
-        pd.options.display.float_format = '{:.8f}'.format
+    def __init__(self, param):
+        self.param = param
 
-    def convert_to_symbols(self, symbols):
+    # region screener
+    def get_total_screener(self):
+        response = httpx.post(f"https://query2.finance.yahoo.com/v1/finance/screener/total",
+                              params={"crumb": self.param["Crumb"]},
+                              headers={"content-type": "application/json", "cookie": self.param["Cookie"]},
+                              data=json.dumps(self.param["Screener"]))
+
+        if response.status_code == 200:
+            total = int(response.json()["finance"]["result"][0]["total"])
+            print(f"Total screener page: {total}")
+            return total
+        else:
+            print(f"Screener error: {response.json()['finance']['error']['description']}")
+            return 0
+    async def post_screener(self, session, url, payload):
+        async with session.post(url, data=payload) as response:
+            response_json = await response.json()
+            if response.status == 200:
+                print(f'Record count: {response_json["finance"]["result"][0]["count"]}')
+                return [q["symbol"] for q in response_json["finance"]["result"][0]["quotes"]]
+            else:
+                print(f"Screener error: {response_json['finance']['error']['description']}")
+                return None
+    async def loop_screener_page(self, offsets):
+        async with ClientSession(headers={"content-type": "application/json", "cookie": self.param["Cookie"]}) as session:
+            url = f"https://query1.finance.yahoo.com/v1/finance/screener?crumb={self.param['Crumb']}"
+            payload = self.param["Screener"]
+            payload["size"] = self.param["PageSize"]
+            tasks = []
+
+            for offset in offsets:
+                payload["offset"] = offset
+                task = asyncio.ensure_future(self.post_screener(session, url, json.dumps(payload)))
+                tasks.append(task)
+            coro_results = await asyncio.gather(*tasks)
+
+            result = []
+            if len(coro_results) > 0:
+                for x in coro_results:
+                    result += x
+            return result
+    def get_from_screener(self):
+        result_count = self.get_total_screener()
+        if result_count > 0:
+            page_size = self.param["PageSize"]
+            print(f"Fetching {result_count} symbols with page size of {page_size}")
+            offsets = range(0, result_count, page_size)
+            loop = asyncio.get_event_loop()
+            return loop.run_until_complete(self.loop_screener_page(offsets))
+    #endregion
+
+    #region historical
+    def get_url(self, symbol):
+        interval = self.param['Interval']
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?symbol={symbol}&interval={interval}&includePrePost=false"
+
+        interval_6mo = "&range=6mo"
+        interval_timestamp = "&period1={0}&period2={1}"
+
+        end_timestamp = datetime.now()
+
+        if interval.endswith("m"):
+            url = url + interval_6mo
+        elif interval.endswith("1h"):
+            start_timestamp = end_timestamp - timedelta(hours=200)
+        elif interval.endswith("1d"):
+            start_timestamp = end_timestamp - timedelta(days=200)
+        elif interval.endswith("1wk"):
+            start_timestamp = end_timestamp - timedelta(weeks=150)
+        elif interval.endswith("1mo"):
+            start_timestamp = end_timestamp - timedelta(weeks=200)
+
+        if start_timestamp is not None:
+            url = (url + interval_timestamp).format(int(start_timestamp.timestamp()), int(end_timestamp.timestamp()))
+
+        return url
+    async def get_ticks(self, session, url):
+        async with session.get(url) as response:
+            response_json = await response.json()
+            if response.status == 200:
+                print(f'get_ticks for {response_json["chart"]["result"][0]["meta"]["symbol"]}')
+                return response_json["chart"]["result"][0]
+            else:
+                print(f"get_ticks error: {response_json['chart']['error']['description']}")
+    async def loop_historical_data(self, symbols):
+        async with ClientSession(headers={"content-type": "application/json", "cookie": self.param["Cookie"]}) as session:
+            tasks = []
+            for symbol in symbols:
+                task = asyncio.ensure_future(self.get_ticks(session, self.get_url(symbol)))
+                tasks.append(task)
+            return await asyncio.gather(*tasks)
+    def get_historical_data(self, symbols):
+        loop = asyncio.get_event_loop()
+        return loop.run_until_complete(self.loop_historical_data(symbols))
+    #endregion
+
+    def get_all_dataframe(self):
         result = []
-        for item in symbols:
-            result.append({'symbol': item})
-        return result
 
-    def get_all_dataframe(self, param):
-        result = []
+        if self.param.__contains__('Symbols') and isinstance(self.param['Symbols'], list) and len(self.param['Symbols']) > 0:
+            allSymbols = self.param['Symbols']
+        elif self.param.__contains__('Screener') and self.param['Screener'] is not None:
+            allSymbols = self.get_from_screener()
 
-        allSymbols = self.convert_to_symbols(param['Symbols'])
-
-        allKlines = self.loop_all_symbols(self.get_symbol_prices, allSymbols, param)
+        allKlines = self.get_historical_data(allSymbols)
 
         for klines in allKlines:
-            klineSymbol = klines[0]['symbol']
-            klineData = klines[1]
+            if klines is None:
+                continue
 
-            if len(klineData) > 0:
-                df = klineData
-                df = df.reset_index()
-                df['index'] = df.index
-                df = df.rename(columns={"High": "high"})
-                df = df.rename(columns={"Low": "low"})
-                df = df.rename(columns={"Open": "open"})
-                df = df.rename(columns={"Close": "close"})
-                df = df.rename(columns={"Volume": "vol"})
-                df = df.rename(columns={"Date": "date"})
+            klineSymbol = klines["meta"]["symbol"]
 
-                # formatting column
-                df.date = pd.to_datetime(df.date, unit='ms')
-                df.open = df.open.astype(float)
-                df.high = df.high.astype(float)
-                df.low = df.low.astype(float)
-                df.close = df.close.astype(float)
-                df.vol = df.vol.astype(float)
+            ticksDf = pd.DataFrame(klines["timestamp"])
+            ohlcDf = pd.DataFrame(klines["indicators"]["quote"][0], columns=["open", "high", "low", "close", "volume"])
+            if self.param["ChartType"] == AppConstants.CHART_TYPE.HEIKIN_ASHI.name:
+                ohlcDf = Utils.heikin_ashi(ohlcDf)
+            df = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
 
-                df['is_up'] = df.open - df.close <= 0
+            df.columns = ["date", "open", "high", "low", "close", "vol"]
+            df = df.reset_index()
+            df['index'] = df.index
 
-                if len(df) > 1 and df.iloc[-1].date == df.iloc[-2].date:
-                    print('remove duplicate date')
-                    df.drop(df.tail(1).index, inplace=True)
+            # formatting column
+            df.date = pd.to_datetime(df.date, unit='ms')
+            df.open = df.open.astype(float)
+            df.high = df.high.astype(float)
+            df.low = df.low.astype(float)
+            df.close = df.close.astype(float)
+            df.vol = df.vol.astype(float)
 
-                asset = Asset(klineSymbol, df, param['Interval'])
-                result.append(asset)
+            df['is_up'] = df.open - df.close <= 0
 
-        self.all_asset_dataframe = result
+            asset = Asset(klineSymbol, df, self.param['Interval'])
+            result.append(asset)
+
         return result
-
-    async def get_symbol_prices(self, symbol, param):
-        print(symbol['symbol'])
-        start = datetime.now() - timedelta(param['CountLimit'])
-        end = datetime.now()
-        #response = web.DataReader(symbol['symbol'], 'yahoo', start, end)
-        response = web.get_data_yahoo(symbols=symbol['symbol'], start=start, end=end, pause=0, interval=param['Interval'][1])
-        return symbol, response
-
-    async def bound_fetch(self, sem, coro, symbol, param):
-        async with sem:
-            return await coro(symbol, param)
-
-    async def run(self, coro, all_symbols, param):
-        tasks = []
-        sem = asyncio.Semaphore(80)
-
-        for symbol in all_symbols:
-            task = asyncio.ensure_future(self.bound_fetch(sem, coro, symbol, param))
-            tasks.append(task)
-
-        responses = await asyncio.gather(*tasks)
-        return responses
-
-    def loop_all_symbols(self, coro, allSymbols, param):
-        loop = asyncio.get_event_loop()
-        future = asyncio.ensure_future(self.run(coro, allSymbols, param))
-        return loop.run_until_complete(future)

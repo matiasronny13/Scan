@@ -16,7 +16,7 @@ class ChartScanner:
 
     def main(self):
         print('Start main...')
-        with open('Configs/input_mkw.json', 'r') as f:
+        with open('Configs/input_yho.json', 'r') as f:
             input_config = json.load(f)
 
         # set exchange
@@ -25,7 +25,7 @@ class ChartScanner:
         elif input_config['Exchange'] == 'tda':
             exchange = Tda.Tda()
         elif input_config['Exchange'] == 'yho':
-            exchange = Yho.Yho()
+            exchange = Yho.Yho(input_config)
         elif input_config['Exchange'] == 'iex':
             exchange = Iex.Iex()
         elif input_config['Exchange'] == 'ond':
@@ -37,7 +37,7 @@ class ChartScanner:
         else:
             exchange = Idx.Idx()
 
-        allAssetData = exchange.get_all_dataframe(input_config)
+        allAssetData = exchange.get_all_dataframe()
 
         IndicatorLoader(allAssetData).load_indicators(input_config['ComputedIndicators'])
 
