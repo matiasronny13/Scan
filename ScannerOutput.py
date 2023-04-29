@@ -215,6 +215,6 @@ class Output:
 
                 fig.tight_layout()
                 #plt.show()
-                plt.savefig("./Output/{0}_{1}.png".format(asset.interval, asset.symbol))
+                plt.savefig("./Output/{0}_{1}.png".format(asset.interval, asset.symbol.replace("*", "^")))
                 plt.close(fig)
 
