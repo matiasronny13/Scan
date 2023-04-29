@@ -6,11 +6,12 @@ import numpy as nm
 
 
 class IndicatorLoader:
-    def __init__(self, assets):
-        self.assets = assets
+    def __init__(self, param):
+        self.param = param
 
-    def load_indicators(self, indicator_names):
-        for asset in self.assets:
+    def load_indicators(self, assets):
+        indicator_names = self.param['ComputedIndicators']
+        for asset in assets:
             for indicatorName in indicator_names:
                 if indicatorName == AppConstants.INDICATORS.BBANDS.name:
                     self.load_bbands(asset)

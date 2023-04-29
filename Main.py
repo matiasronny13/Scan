@@ -39,14 +39,14 @@ class ChartScanner:
 
         allAssetData = exchange.get_all_dataframe()
 
-        IndicatorLoader(allAssetData).load_indicators(input_config['ComputedIndicators'])
+        IndicatorLoader(input_config).load_indicators(allAssetData)
 
-        Scanner(allAssetData).scan(input_config['Strategy'])
+        Scanner(input_config).scan(allAssetData)
 
-        if input_config['Depth']['Visible'] == 'true':
-            exchange.get_all_depths(input_config)
+        #if input_config['Depth']['Visible'] == 'true':
+        #    exchange.get_all_depths(input_config)
 
-        Output(allAssetData).generate_output(input_config)
+        Output(input_config).generate_output(allAssetData)
 
 
 if __name__ == '__main__':

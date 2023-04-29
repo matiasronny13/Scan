@@ -11,8 +11,8 @@ from matplotlib import transforms
 
 class Output:
 
-    def __init__(self, all_asset_data):
-        self._allAssetData = all_asset_data
+    def __init__(self, param):
+        self.param = param
         register_matplotlib_converters()
 
     def get_default_config(self, subplots_config):
@@ -176,10 +176,10 @@ class Output:
             print("EXCEPTION: Failed to draw indicators for {0}".format(asset.symbol))
             print("Message: {0}".format(ex))
 
-    def generate_output(self, config):
+    def generate_output(self, all_asset_data):
         print("Start generating output ....")
-        self.depth_zoom = int(config['Depth']['Zoom'])
-        subplots_config = config['Subplots']
+        self.depth_zoom = int(self.param['Depth']['Zoom'])
+        subplots_config = self.param['Subplots']
         subplots_count = len(subplots_config)
 
         if subplots_count == 1:
@@ -191,7 +191,7 @@ class Output:
         elif subplots_count == 4:
             plot_ratio = [1, 1, 1, 1]
 
-        for asset in self._allAssetData:
+        for asset in all_asset_data:
             if asset.is_displayed:
                 #asset.klines["date"] = asset.klines["date"].apply(mdates.date2num)
 

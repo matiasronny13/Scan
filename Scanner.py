@@ -3,8 +3,8 @@ from AppConstants import INDICATORS
 import math
 
 class Scanner:
-    def __init__(self, asset_list):
-        self.assetList = asset_list
+    def __init__(self, param):
+        self.param = param
 
     @staticmethod
     def is_bullish_candle(tick):
@@ -171,8 +171,9 @@ class Scanner:
                 return True
         return False
 
-    def scan(self, strategy):
-        for asset in self.assetList:
+    def scan(self, asset_list):
+        strategy = self.param['Strategy']
+        for asset in asset_list:
             if len(asset.klines) > 5:
                 if strategy["Name"] == StrategyCode.BB_REV.name:
                     asset.is_displayed = self.bb_reversal(asset, strategy)
