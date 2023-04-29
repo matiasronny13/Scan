@@ -11,3 +11,19 @@ class Utils:
         df['high'] = df.loc[:, ['open', 'close']].join(ohlc_df['high']).max(axis=1)
         df['low'] = df.loc[:, ['open', 'close']].join(ohlc_df['low']).min(axis=1)
         return df
+
+    @staticmethod
+    def convert_to_4hours(ohlc_df):
+        if ohlc_df is not None and len(ohlc_df) > 0:
+            df_resampled = ohlc_df.resample("4H", on="date").agg({
+                "open": "first",
+                "high": "max",
+                "low": "min",
+                "close": "last",
+                "vol": "sum"
+            })
+
+            # Drop incomplete intervals at the end of the DataFrame
+            df_resampled.dropna(inplace=True)
+
+            return df_resampled

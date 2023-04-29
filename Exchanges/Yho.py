@@ -67,23 +67,27 @@ class Yho:
 
     #region historical
     def get_url(self, symbol):
-        interval = self.param['Interval']
-        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?symbol={symbol}&interval={interval}&includePrePost=false"
+        interval = self.param["Interval"]
+        interval_url = "1h" if interval == "4h" else interval   #change 4h to 1h as workaround
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?symbol={symbol}&interval={interval_url}&includePrePost=false"
 
         interval_6mo = "&range=6mo"
         interval_timestamp = "&period1={0}&period2={1}"
 
+        is_weekend = False if datetime.today().weekday() < 5 else True
         end_timestamp = datetime.now()
 
         if interval.endswith("m"):
             url = url + interval_6mo
-        elif interval.endswith("1h"):
-            start_timestamp = end_timestamp - timedelta(hours=200)
-        elif interval.endswith("1d"):
+        elif interval == "1h":
+            start_timestamp = end_timestamp - timedelta(hours=400 if is_weekend else 300)
+        elif interval == "4h":
+            start_timestamp = end_timestamp - timedelta(hours=1600 if is_weekend else 1200)
+        elif interval == "1d":
             start_timestamp = end_timestamp - timedelta(days=200)
-        elif interval.endswith("1wk"):
+        elif interval == "1wk":
             start_timestamp = end_timestamp - timedelta(weeks=150)
-        elif interval.endswith("1mo"):
+        elif interval == "1mo":
             start_timestamp = end_timestamp - timedelta(weeks=200)
 
         if start_timestamp is not None:
@@ -133,18 +137,22 @@ class Yho:
             df = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
 
             df.columns = ["date", "open", "high", "low", "close", "vol"]
-            df = df.reset_index()
-            df['index'] = df.index
 
             # formatting column
-            df.date = pd.to_datetime(df.date, unit='ms')
+            df.date = pd.to_datetime(df.date, unit='s')
             df.open = df.open.astype(float)
             df.high = df.high.astype(float)
             df.low = df.low.astype(float)
             df.close = df.close.astype(float)
             df.vol = df.vol.astype(float)
 
+            if self.param["Interval"] == "4h":
+                df = Utils.convert_to_4hours(df)
+
             df['is_up'] = df.open - df.close <= 0
+
+            df.reset_index(inplace=True)
+            df['index'] = df.index
 
             asset = Asset(klineSymbol, df, self.param['Interval'])
             result.append(asset)
