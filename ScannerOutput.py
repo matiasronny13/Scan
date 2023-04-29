@@ -77,7 +77,7 @@ class Output:
         ax2.set_xlim(asset.depth.qty.max() + asset.depth.qty.max() * 0.5)
 
         # vertical space
-        zoom_distance = (asset.klines.high.max() - asset.klines.low.min()) * self.depth_zoom
+        zoom_distance = (asset.klines.high.max() - asset.klines.low.min()) * int(self.param['Depth']['Zoom'])
         ax2.set_ylim(asset.klines.low.min() - zoom_distance, asset.klines.high.max() + zoom_distance)
 
         ax2.hlines(y=asset.depth.price, xmin=0, xmax=asset.depth.qty, alpha=.8, color='b')
@@ -178,7 +178,6 @@ class Output:
 
     def generate_output(self, all_asset_data):
         print("Start generating output ....")
-        self.depth_zoom = int(self.param['Depth']['Zoom'])
         subplots_config = self.param['Subplots']
         subplots_count = len(subplots_config)
 
