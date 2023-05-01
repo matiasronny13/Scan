@@ -84,11 +84,11 @@ class Yho:
         elif interval == "4h":
             start_timestamp = end_timestamp - timedelta(hours=1600 if is_weekend else 1200)
         elif interval == "1d":
-            start_timestamp = end_timestamp - timedelta(days=200)
+            start_timestamp = end_timestamp - timedelta(days=250)
         elif interval == "1wk":
-            start_timestamp = end_timestamp - timedelta(weeks=150)
+            start_timestamp = end_timestamp - timedelta(weeks=250)
         elif interval == "1mo":
-            start_timestamp = end_timestamp - timedelta(weeks=200)
+            start_timestamp = end_timestamp - timedelta(weeks=250)
 
         if start_timestamp is not None:
             url = (url + interval_timestamp).format(int(start_timestamp.timestamp()), int(end_timestamp.timestamp()))
