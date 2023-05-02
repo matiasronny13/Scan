@@ -1,10 +1,10 @@
 {
   "Exchange": "yho",
-  "Crumb": "LKFH6LnWCm2",
-  "Cookie": "B=6upmke5hvjjuh&b=3&s=59; A1=d=AQABBNHP-WMCEKMQh8VhePnVCOUHhXHUZm8FEgEBCAF-P2RrZFpOb2UB_eMBAAcI0c_5Y3HUZm8&S=AQAAAg_MngjDSx_G5gJ6ncC4l7o; A3=d=AQABBNHP-WMCEKMQh8VhePnVCOUHhXHUZm8FEgEBCAF-P2RrZFpOb2UB_eMBAAcI0c_5Y3HUZm8&S=AQAAAg_MngjDSx_G5gJ6ncC4l7o; GUC=AQEBCAFkP35ka0IirQUd; tbla_id=51c00dec-2e4c-44f6-9690-c700224dfeed-tuctb2896fa; PRF=t%3DES%253DF%252BF*ZB.CBT%252BZBHA-J23.SI%252BNG%253DF%252BF*QG.NYM%252BPAM23.NYM%252BBZN23.NYM%252BAAPL%252BGC%253DF%252BZN%253DF%252BNGT%253DF%252BSGD%253DX%252BA%252BGOOG%252BGFQ23.CME%26newChartbetateaser%3D1; cmp=t=1682697614&j=0&u=1---; A1S=d=AQABBNHP-WMCEKMQh8VhePnVCOUHhXHUZm8FEgEBCAF-P2RrZFpOb2UB_eMBAAcI0c_5Y3HUZm8&S=AQAAAg_MngjDSx_G5gJ6ncC4l7o&j=WORLD",
+  "Crumb": "zLOfpMfXuND",
+  "Cookie": "A3=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo; A1=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo; tbla_id=de0824ec-59de-4d21-9a6a-a3fab6867e1c-tuctb4a5903; B=6oj4tsdi51krt&b=3&s=cr; GUC=AQEBAQFkUiRkWkIf2QSv; PRF=newChartbetateaser%3D0%252C1684228285315%26t%3DYM%253DF; A1S=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo&j=WORLD; cmp=t=1683026674&j=0&u=1---",
 
   "PageSize": 200,
-  "Screener": {"size":25,"offset":0,"sortField":"fundnetassets","sortType":"DESC","quoteType":"MUTUALFUND","topOperator":"AND","query":{"operator":"AND","operands":[{"operator":"or","operands":[{"operator":"EQ","operands":["exchange","NAS"]}]},{"operator":"or","operands":[{"operator":"EQ","operands":["performanceratingoverall",5]}]},{"operator":"or","operands":[{"operator":"EQ","operands":["categoryname","Allocation--30% to 50% Equity"]}]}]},"userId":"","userIdType":"guid"},
+  "Screener": {"size":25,"offset":0,"sortField":"fundnetassets","sortType":"DESC","quoteType":"ETF","topOperator":"AND","query":{"operator":"AND","operands":[{"operator":"or","operands":[{"operator":"EQ","operands":["performanceratingoverall",5]}]},{"operator":"btwn","operands":["intradayprice",10,500]}]},"userId":"","userIdType":"guid"},
 
   "Symbols-": [ "AAPL", "asfasf", "MSFT" ],
 
@@ -17,7 +17,7 @@
     "BottomThresholdPercentage": "3"
   },
   "Strategy": {
-    "Name": "",
+    "Name": "ALL_NEGATIVE",
     "TickCount": 2
   },
   "Subplots": [
