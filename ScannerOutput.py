@@ -195,6 +195,9 @@ class Output:
         elif subplots_count == 4:
             plot_ratio = [1, 1, 1, 1]
 
+        subdir = f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{all_asset_data[0].interval}'
+        os.mkdir("./Output/" + subdir)
+
         for asset in all_asset_data:
             if asset.is_displayed:
                 #asset.klines["date"] = asset.klines["date"].apply(mdates.date2num)
@@ -220,8 +223,6 @@ class Output:
 
                 fig.tight_layout()
                 #plt.show()
-                subdir = f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{asset.interval}'
-                os.mkdir("./Output/" + subdir)
                 plt.savefig("./Output/{0}/{1}_{2}.png".format(subdir, asset.interval, asset.symbol.replace("*", "^")))
                 plt.close(fig)
 
