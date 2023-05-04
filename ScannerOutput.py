@@ -8,6 +8,8 @@ from AppConstants import INDICATORS
 from datetime import date
 from datetime import timedelta
 from matplotlib import transforms
+from datetime import datetime
+import os
 
 class Output:
 
@@ -218,6 +220,8 @@ class Output:
 
                 fig.tight_layout()
                 #plt.show()
-                plt.savefig("./Output/{0}_{1}.png".format(asset.interval, asset.symbol.replace("*", "^")))
+                subdir = f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{asset.interval}'
+                os.mkdir("./Output/" + subdir)
+                plt.savefig("./Output/{0}/{1}_{2}.png".format(subdir, asset.interval, asset.symbol.replace("*", "^")))
                 plt.close(fig)
 
