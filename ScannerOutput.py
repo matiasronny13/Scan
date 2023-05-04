@@ -177,6 +177,9 @@ class Output:
             print("Message: {0}".format(ex))
 
     def generate_output(self, all_asset_data):
+        if len(all_asset_data) == 0:
+            return
+
         print("Start generating output ....")
         subplots_config = self.param['Subplots']
         subplots_count = len(subplots_config)

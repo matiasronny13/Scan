@@ -58,6 +58,11 @@ class Yho:
     def get_from_screener(self):
         result_count = self.get_total_screener()
         if result_count > 0:
+            if result_count > 700:
+                if input(f"Screener results in {result_count} records which is more than 700, continue (y/enter)? ") != "y":
+                    print("Scan aborted")
+                    return []
+
             page_size = self.param["PageSize"]
             print(f"Fetching {result_count} symbols with page size of {page_size}")
             offsets = range(0, result_count, page_size)
