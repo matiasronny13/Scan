@@ -168,6 +168,7 @@ class Scanner:
         if self.macd_negative(asset):
             high = asset.klines.iloc[-1].high
             if high < bb.iloc[-1].middle and high < sar.iloc[-1].real:
+                print(f"=> {asset.symbol}")
                 return True
         return False
 
