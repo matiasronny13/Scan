@@ -61,7 +61,7 @@ class Output:
 
     def draw_sar(self, asset, ax):
         data = asset.indicators[INDICATORS.SAR.name]
-        ax.plot(asset.klines.index, data.real, 'b.', alpha=1, markersize=1)
+        ax.plot(asset.klines.index, data.real, 'b.', alpha=1, markersize=3)
 
     def draw_ma(self, asset, ax, indicator_name):
         data = asset.indicators[indicator_name]
