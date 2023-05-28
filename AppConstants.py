@@ -19,7 +19,8 @@ class StrategyCode(Enum):
     BB_BREAK = 11,
     SAR_REV_BEAR = 12,
     GAP = 13,
-    ALL_NEGATIVE = 14
+    ALL_NEGATIVE = 14,
+    FIB_RETRACE = 15
 
 
 class INDICATORS(Enum):
@@ -38,7 +39,8 @@ class INDICATORS(Enum):
     ANNO_CDLABANDONEDBABY = 13,
     OBV = 14,
     SPRS = 15,
-    MA = 16
+    MA = 16,
+    FIBONACCI = 17
 
 
 class CHART_TYPE(Enum):

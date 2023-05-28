@@ -172,6 +172,23 @@ class Scanner:
                 return True
         return False
 
+    def fibonacci_retracement(self, asset, strategy):
+        if INDICATORS.FIBONACCI.name not in asset.indicators:
+            return False
+
+        fibonacci = asset.indicators[INDICATORS.FIBONACCI.name]
+        last_bar = asset.klines.iloc[-1]
+        target_level = strategy["FibonacciLevel"]
+        fib_direction = strategy["FibonacciDirection"]
+
+        if fib_direction == "down" and fibonacci[target_level - 1]["price"] >= last_bar.low >= fibonacci[target_level]["price"]:
+            return True
+        elif fib_direction == "up" and fibonacci[target_level - 1]["price"] >= last_bar.high >= fibonacci[target_level]["price"]:
+            return True
+
+    def always_true(self, asset, strategy):
+        return True
+
     def scan(self, asset_list):
         strategy = self.param['Strategy']
         for asset in asset_list:
@@ -204,7 +221,9 @@ class Scanner:
                     asset.is_displayed = self.gap(asset, strategy)
                 elif strategy["Name"] == StrategyCode.ALL_NEGATIVE.name:
                     asset.is_displayed = self.all_negative(asset, strategy)
+                elif strategy["Name"] == StrategyCode.FIB_RETRACE.name:
+                    asset.is_displayed = self.fibonacci_retracement(asset, strategy)
                 else:
-                    asset.is_displayed = True
+                    asset.is_displayed = self.always_true(asset, strategy)
 
 

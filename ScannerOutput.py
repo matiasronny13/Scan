@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import mplfinance as mpf
 import matplotlib.dates as mdates
 from mplfinance.original_flavor import candlestick_ohlc
 from pandas.plotting import register_matplotlib_converters
@@ -99,6 +98,30 @@ class Output:
         ax2.set_xlim(1)
         ax2.hlines(y=yaxes.y, xmin=0, xmax=1, alpha=0.01, color='b')
 
+    def draw_fibonacci(self, asset, ax):
+        if INDICATORS.FIBONACCI.name not in asset.indicators:
+            return
+
+        yaxes = asset.indicators[INDICATORS.FIBONACCI.name]
+        if yaxes is not None and len(yaxes) > 0:
+            is_first = True
+            for axis in yaxes:
+                if is_first:
+                    top = axis["price"]
+                    is_first = False
+                else:
+                    bottom = axis["price"]
+                    ax.axhspan(ymin=bottom, ymax=top, alpha=0.1, color=axis["color"], label=axis["percent"], zorder=0, linestyle="-")
+                    top = bottom
+
+                ax.annotate(f"{str(axis['percent'])[0:4]}",
+                            xy=(len(asset.klines), axis['price']), xycoords='data',
+                            xytext=(0, -3), textcoords="offset points",
+                            size=10,
+                            color="grey")
+            ax.set_xmargin(0.02)
+            ax.hlines(y=yaxes[3]['price'], xmin=0, xmax=len(asset.klines), alpha=1, color='red', linestyles="--")
+
     def draw_volume(self, asset, ax):
         data = asset.klines.vol
         ax2 = ax.twinx()
@@ -159,6 +182,8 @@ class Output:
                 self.draw_obv(asset, ax)
             elif indicator_name == INDICATORS.SPRS.name:
                 self.draw_support_resistance(asset, ax)
+            elif indicator_name == INDICATORS.FIBONACCI.name:
+                self.draw_fibonacci(asset, ax)
             elif indicator_name == INDICATORS.MA.name:
                 self.draw_ma(asset, ax)
 

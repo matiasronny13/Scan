@@ -39,10 +39,40 @@ class IndicatorLoader:
                     self.support_resistance(asset)
                 elif indicatorName == AppConstants.INDICATORS.MA.name:
                     self.moving_average(asset, [50, 100, 200])
+                elif indicatorName == AppConstants.INDICATORS.FIBONACCI.name:
+                    self.fibonacci(asset)
 
     def get_count(self, param, klines):
         print(param.y)
         return len(klines[(klines.low <= param.y) & (param.y <= klines.high)])
+
+    def fibonacci(self, asset):
+        fibonacci_result = []
+        fib_index = [0, 0.236, 0.382, 0.500, 0.618, 0.786, 1]
+        fib_colors = ["blue", "blue", "yellow", "green", "red", "yellow", "blue"]
+        is_calculate = False
+
+        fib_interval = self.param['Strategy']['FibonacciIntervalDay']
+        fib_direction = self.param['Strategy']['FibonacciDirection']
+        current_bar = asset.klines.iloc[-1]
+        bars = asset.klines[-fib_interval:-1]  # exclude the last one
+        highest_bar = bars[bars.high == bars.high.max()].iloc[-1]
+        lowest_bar = bars[bars.low == bars.low.min()].iloc[-1]
+        diff = highest_bar.high - lowest_bar.low
+
+        if fib_direction == "down" and highest_bar.high >= current_bar.low >= lowest_bar.low and highest_bar["index"] > lowest_bar["index"]:
+            is_calculate = True
+        elif fib_direction == "up" and highest_bar.high >= current_bar.high >= lowest_bar.low and highest_bar["index"] < lowest_bar["index"]:
+            fib_index = fib_index[::-1]
+            is_calculate = True
+
+        if is_calculate:
+            for idx in range(len(fib_index)):
+                if fib_direction == "down":
+                    fibonacci_result.append({"price": highest_bar.high - fib_index[idx] * diff, "percent": fib_index[idx], "color": fib_colors[idx]})
+                elif fib_direction == "up":
+                    fibonacci_result.append({"price": lowest_bar.low + fib_index[idx] * diff, "percent": fib_index[idx], "color": fib_colors[idx]})
+            asset.indicators.update({AppConstants.INDICATORS.FIBONACCI.name: fibonacci_result})
 
     def moving_average(self, asset, periods):
         df = {}

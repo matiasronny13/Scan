@@ -74,7 +74,7 @@ class Yho:
     def get_url(self, symbol):
         interval = self.param["Interval"]
         interval_url = "1h" if interval == "4h" else interval   #change 4h to 1h as workaround
-        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?symbol={symbol}&interval={interval_url}&includePrePost=false"
+        url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval={interval_url}&includePrePost=false"
 
         interval_6mo = "&range=6mo"
         interval_timestamp = "&period1={0}&period2={1}"
