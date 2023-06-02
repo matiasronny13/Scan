@@ -1,40 +1,41 @@
 {
-  "Exchange": "yho",
-  "Crumb": "zLOfpMfXuND",
-  "Cookie": "A3=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo; A1=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo; tbla_id=de0824ec-59de-4d21-9a6a-a3fab6867e1c-tuctb4a5903; B=6oj4tsdi51krt&b=3&s=cr; GUC=AQEBAQFkUiRkWkIf2QSv; PRF=newChartbetateaser%3D0%252C1684228285315%26t%3DYM%253DF; A1S=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo&j=WORLD; cmp=t=1683026674&j=0&u=1---",
-
-  "PageSize": 200,
-  "Screener": {"size":25,"offset":0,"sortField":"intradaymarketcap","sortType":"DESC","quoteType":"EQUITY","topOperator":"AND","query":{"operator":"AND","operands":[{"operator":"or","operands":[{"operator":"EQ","operands":["region","us"]}]},{"operator":"or","operands":[{"operator":"GT","operands":["intradaymarketcap",100000000000]},{"operator":"BTWN","operands":["intradaymarketcap",10000000000,100000000000]}]},{"operator":"or","operands":[{"operator":"EQ","operands":["sector","Basic Materials"]},{"operator":"EQ","operands":["sector","Financial Services"]}]}]},"userId":"LBN4RWSHROJUA6LD7HTCA3NSCA","userIdType":"guid"},
-
-  "Symbols-": [ "GOOG"],
-
-  "Interval": "1wk",
-  "ChartType": "xHEIKIN_ASHI",
-  "ComputedIndicators":["SAR", "MACD", "BBANDS", "MA", "OBV", "FIBONACCI"],
-  "Depth": {
-    "Visible": "false",
-    "Zoom": "1",
-    "BottomThresholdPercentage": "3"
+  "exchange": {
+    "name": "yho",
+    "crumb": "zLOfpMfXuND",
+    "cookie": "A3=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo; A1=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo; tbla_id=de0824ec-59de-4d21-9a6a-a3fab6867e1c-tuctb4a5903; B=6oj4tsdi51krt&b=3&s=cr; GUC=AQEBAQFkUiRkWkIf2QSv; PRF=newChartbetateaser%3D0%252C1684228285315%26t%3DYM%253DF; A1S=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo&j=WORLD; cmp=t=1683026674&j=0&u=1---"
   },
-  "Strategy": {
-    "Name": "FIB_RETRACE",
-    "TickCount": 2,
-    "FibonacciIntervalDay": 200,
-    "FibonacciDirection": "down",
-    "FibonacciLevel": 5
+  "query": {
+    "pageSize": 200,
+    "screener0": {"size":25,"offset":0,"sortField":"intradaymarketcap","sortType":"DESC","quoteType":"EQUITY","topOperator":"AND","query":{"operator":"AND","operands":[{"operator":"or","operands":[{"operator":"EQ","operands":["region","us"]}]},{"operator":"or","operands":[{"operator":"GT","operands":["intradaymarketcap",100000000000]},{"operator":"BTWN","operands":["intradaymarketcap",10000000000,100000000000]}]},{"operator":"or","operands":[{"operator":"EQ","operands":["sector","Basic Materials"]},{"operator":"EQ","operands":["sector","Financial Services"]}]}]},"userId":"LBN4RWSHROJUA6LD7HTCA3NSCA","userIdType":"guid"},
+    "symbols": [ "GOOG"],
+    "interval": "1wk"
   },
-  "Subplots": [
-    {
-      "Axes": "default",
-      "Indicators": ["CANDLESTICK", "BBANDS", "SAR", "MA", "FIBONACCI"]
-    },
-    {
-      "Axes": "ax1",
-      "Indicators": ["MACD"]
-    },
-    {
-      "Axes": "ax2",
-      "Indicators": ["OBV"]
-    }
-  ]
+  "chart": {
+    "type": "CANDLESTICK",
+    "indicators": [
+      {
+          "id": "TRIPLE_MA",
+          "axes": "default",
+          "parameter": {
+            "fast": 50,
+            "medium": 100,
+            "long": 200
+          }
+      },
+      {
+          "id": "TRIPLE_MA",
+          "axes": "ax2",
+          "parameter": {
+            "fast": 50,
+            "medium": 100,
+            "long": 200
+          }
+      }
+    ]
+  },
+  "strategy": {
+    "name": "",
+    "tickCount": 2,
+    "fibonacciLevel": 5
+  }
 }
