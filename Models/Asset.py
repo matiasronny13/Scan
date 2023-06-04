@@ -6,7 +6,6 @@ class Asset:
         self.interval = interval
         self.indicators = {}
         self.is_displayed = False
-        self.depth = {}
         
 
 

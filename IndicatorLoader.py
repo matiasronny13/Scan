@@ -1,8 +1,6 @@
 import talib as ta
 import pandas as pd
 import AppConstants
-from stocktrends import Renko
-import numpy as nm
 
 
 class IndicatorLoader:
@@ -10,52 +8,40 @@ class IndicatorLoader:
         self.param = param
 
     def load_indicators(self, assets):
-        indicator_names = self.param['ComputedIndicators']
+        indicators = self.param['chart']['indicators']
         for asset in assets:
-            for indicatorName in indicator_names:
-                if indicatorName == AppConstants.INDICATORS.BBANDS.name:
-                    self.load_bbands(asset)
-                elif indicatorName == AppConstants.INDICATORS.MACD.name:
-                    self.load_macd(asset)
-                elif indicatorName == AppConstants.INDICATORS.SAR.name:
-                    self.load_sar(asset)
-                elif indicatorName == AppConstants.INDICATORS.EMA.name:
-                    self.load_ema(asset)
-                elif indicatorName == AppConstants.INDICATORS.DEMA.name:
-                    self.load_dema(asset)
-                elif indicatorName == AppConstants.INDICATORS.RENKO.name:
-                    self.load_renko(asset)
-                elif indicatorName == AppConstants.INDICATORS.CCI.name:
-                    self.load_cci(asset)
-                elif indicatorName == AppConstants.INDICATORS.ANNO_3CROWS.name:
-                    self.anno_3crows(asset)
-                elif indicatorName == AppConstants.INDICATORS.ANNO_CDLEVENINGSTAR.name:
-                    self.anno_cdleveningstar(asset)
-                elif indicatorName == AppConstants.INDICATORS.ANNO_CDLABANDONEDBABY.name:
-                    self.anno_cdlabandonedbaby(asset)
-                elif indicatorName == AppConstants.INDICATORS.OBV.name:
-                    self.load_obv(asset)
-                elif indicatorName == AppConstants.INDICATORS.SPRS.name:
-                    self.support_resistance(asset)
-                elif indicatorName == AppConstants.INDICATORS.MA.name:
-                    self.moving_average(asset, [50, 100, 200])
-                elif indicatorName == AppConstants.INDICATORS.FIBONACCI.name:
-                    self.fibonacci(asset)
+            for indicator in indicators:
+                indicator_parameter = indicator['parameter']
+                indicator_output = None
+                match indicator['id']:
+                    case AppConstants.INDICATORS.BBANDS.name:
+                        indicator_output = self.load_bbands(asset.klines, indicator_parameter)
+                    case AppConstants.INDICATORS.MACD.name:
+                        indicator_output = self.load_macd(asset.klines, indicator_parameter)
+                    case AppConstants.INDICATORS.SAR.name:
+                        indicator_output = self.load_sar(asset.klines, indicator_parameter)
+                    case AppConstants.INDICATORS.CCI.name:
+                        indicator_output = self.load_cci(asset.klines, indicator_parameter)
+                    case AppConstants.INDICATORS.OBV.name:
+                        indicator_output = self.load_obv(asset.klines, indicator_parameter)
+                    case AppConstants.INDICATORS.MA.name:
+                        indicator_output = self.moving_average(asset.klines, indicator_parameter)
+                    case AppConstants.INDICATORS.FIBONACCI.name:
+                        indicator_output = self.fibonacci(asset.klines, indicator_parameter)
 
-    def get_count(self, param, klines):
-        print(param.y)
-        return len(klines[(klines.low <= param.y) & (param.y <= klines.high)])
+                asset.indicators.update({indicator['id']: indicator_output})
 
-    def fibonacci(self, asset):
+
+    def fibonacci(self, klines, parameter):
         fibonacci_result = []
         fib_index = [0, 0.236, 0.382, 0.500, 0.618, 0.786, 1]
         fib_colors = ["blue", "blue", "yellow", "green", "red", "yellow", "blue"]
         is_calculate = False
 
-        fib_interval = self.param['Strategy']['FibonacciIntervalDay']
-        fib_direction = self.param['Strategy']['FibonacciDirection']
-        current_bar = asset.klines.iloc[-1]
-        bars = asset.klines[-fib_interval:-1]  # exclude the last one
+        fib_interval = parameter['barCount']
+        fib_direction = parameter['direction']
+        current_bar = klines.iloc[-1]
+        bars = klines[-fib_interval:-1]  # exclude the last one
         highest_bar = bars[bars.high == bars.high.max()].iloc[-1]
         lowest_bar = bars[bars.low == bars.low.min()].iloc[-1]
         diff = highest_bar.high - lowest_bar.low
@@ -72,89 +58,31 @@ class IndicatorLoader:
                     fibonacci_result.append({"price": highest_bar.high - fib_index[idx] * diff, "percent": fib_index[idx], "color": fib_colors[idx]})
                 elif fib_direction == "up":
                     fibonacci_result.append({"price": lowest_bar.low + fib_index[idx] * diff, "percent": fib_index[idx], "color": fib_colors[idx]})
-            asset.indicators.update({AppConstants.INDICATORS.FIBONACCI.name: fibonacci_result})
+            return fibonacci_result
 
-    def moving_average(self, asset, periods):
-        df = {}
-        if periods:
-            for i in range(len(periods)):
-                ma = ta.MA(asset.klines.close, timeperiod=periods[i], matype=0)
-                df[f'ma{i}'] = ma
-        df = pd.DataFrame(df)
-        asset.indicators.update({AppConstants.INDICATORS.MA.name: df})
+    def moving_average(self, klines, parameter):
+        fast = ta.MA(klines.close, timeperiod=parameter['fast'], matype=0)
+        medium = ta.MA(klines.close, timeperiod=parameter['medium'], matype=0)
+        long = ta.MA(klines.close, timeperiod=parameter['long'], matype=0)
+        return pd.DataFrame({'fast': fast, 'medium': medium, 'long': long})
 
-    def support_resistance(self, asset):
-        maxima = asset.klines.high.max() * 100
-        minima = asset.klines.low.min() * 100
+    def load_bbands(self, klines, parameter):
+        result_set = ta.BBANDS(klines.close, timeperiod=parameter['timeperiod'], nbdevup=parameter['nbdevup'], nbdevdn=parameter['nbdevdn'])
+        return pd.DataFrame({'lower': result_set[2], 'middle': result_set[1], 'upper': result_set[0]})
 
-        df = pd.DataFrame(list(nm.arange(minima, maxima)), columns=['y'])
-        df.y = df.y * 0.01
-        num = df.apply(self.get_count, axis=1, args=[asset.klines])
-        df['num'] = num
+    def load_cci(self, klines, parameter):
+        result_set = ta.CCI(klines.high, klines.low, klines.close, timeperiod=parameter['timeperiod'])
+        return pd.DataFrame({'real': result_set})
 
-        distinct = list(set(num))
-        distinct.sort()
-        top = distinct[-3:]
+    def load_macd(self, klines, parameter):
+        macd, macdsignal, macdhist = ta.MACD(klines.close, fastperiod=parameter['fastperiod'], slowperiod=parameter['slowperiod'], signalperiod=parameter['signalperiod'])
+        return pd.DataFrame({'macd': macd, 'macdsignal': macdsignal, 'macdhist': macdhist})
 
-        asset.indicators.update({AppConstants.INDICATORS.SPRS.name: df[df.num.isin(top)]})
+    def load_sar(self, klines, parameter):
+        real = ta.SAR(klines.high, klines.low, acceleration=parameter['acceleration'], maximum=parameter['maximum'])
+        return pd.DataFrame({'real': real})
 
-    def anno_3crows(self, asset):
-        result_set = ta.CDLIDENTICAL3CROWS(asset.klines.open, asset.klines.high, asset.klines.low, asset.klines.close)
-        df = pd.DataFrame({'integer': result_set})
-        asset.indicators.update({AppConstants.INDICATORS.ANNO_3CROWS.name: df})
+    def load_obv(self, klines, parameter):
+        obv = ta.OBV(klines.close, klines.vol)
+        return pd.DataFrame({'real': obv})
 
-    def anno_cdleveningstar(self, asset):
-        result_set = ta.CDLEVENINGSTAR(asset.klines.open, asset.klines.high, asset.klines.low, asset.klines.close, penetration=0)
-        df = pd.DataFrame({'integer': result_set})
-        asset.indicators.update({AppConstants.INDICATORS.ANNO_CDLEVENINGSTAR.name: df})
-
-    def anno_cdlabandonedbaby(self, asset):
-        result_set = ta.CDLABANDONEDBABY(asset.klines.open, asset.klines.high, asset.klines.low, asset.klines.close, penetration=0)
-        df = pd.DataFrame({'integer': result_set})
-        asset.indicators.update({AppConstants.INDICATORS.ANNO_CDLABANDONEDBABY.name: df})
-
-    def load_renko(self, asset):
-        # still need more research
-        renko = Renko(asset.klines[['date', 'open', 'high', 'low', 'close', 'vol']].copy())
-        renko.brick_size = 0.0005434
-        df = renko.get_ohlc_data()
-        asset.indicators.update({AppConstants.INDICATORS.RENKO.name: df})
-
-    def load_bbands(self, asset):
-        result_set = ta.BBANDS(asset.klines.close, timeperiod=21, nbdevup=2, nbdevdn=2)
-        df = pd.DataFrame({'lower': result_set[2], 'middle': result_set[1], 'upper': result_set[0]})
-        asset.indicators.update({AppConstants.INDICATORS.BBANDS.name: df})
-
-    def load_cci(self, asset):
-        result_set = ta.CCI(asset.klines.high, asset.klines.low, asset.klines.close, timeperiod=20)
-        df = pd.DataFrame({'real': result_set})
-        asset.indicators.update({AppConstants.INDICATORS.CCI.name: df})
-
-    def load_macd(self, asset):
-        macd, macdsignal, macdhist = ta.MACD(asset.klines.close, fastperiod=12, slowperiod=26, signalperiod=9)
-        df = pd.DataFrame({'macd': macd, 'macdsignal': macdsignal, 'macdhist': macdhist})
-        asset.indicators.update({AppConstants.INDICATORS.MACD.name: df})
-
-    def load_sar(self, asset):
-        real = ta.SAR(asset.klines.high, asset.klines.low, acceleration=0.02, maximum=0.2)
-        df = pd.DataFrame({'real': real})
-        asset.indicators.update({AppConstants.INDICATORS.SAR.name: df})
-
-    def load_ema(self, asset):
-        fast = ta.EMA(asset.klines.high, timeperiod=7)
-        medium = ta.EMA(asset.klines.high, timeperiod=25)
-        long = ta.EMA(asset.klines.high, timeperiod=99)
-        df = pd.DataFrame({'fast': fast, 'medium': medium, 'long': long})
-        asset.indicators.update({AppConstants.INDICATORS.EMA.name: df})
-
-    def load_obv(self, asset):
-        obv = ta.OBV(asset.klines.close, asset.klines.vol)
-        df = pd.DataFrame({'real': obv})
-        asset.indicators.update({AppConstants.INDICATORS.OBV.name: df})
-
-    def load_dema(self, asset):
-        fast = ta.DEMA(asset.klines.high, timeperiod=7)
-        medium = ta.DEMA(asset.klines.high, timeperiod=25)
-        long = ta.DEMA(asset.klines.high, timeperiod=99)
-        df = pd.DataFrame({'fast': fast, 'medium': medium, 'long': long})
-        asset.indicators.update({AppConstants.INDICATORS.DEMA.name: df})
