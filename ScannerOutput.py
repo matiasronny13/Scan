@@ -5,6 +5,7 @@ import numpy as np
 from AppConstants import INDICATORS
 from datetime import datetime
 import os
+from numpy import ndarray
 
 
 class Output:
@@ -40,22 +41,23 @@ class Output:
                 #self.bar_width = .0003 * ((asset.klines.date[1] - asset.klines.date[0]) / 0.00069444440305233)
 
                 fig, axes = plt.subplots(subplots_count, 1, sharex=True, figsize=(20, 15), gridspec_kw={'height_ratios': plot_ratio })
+                axes_list = axes if isinstance(axes, ndarray) else [axes]   #if just single object then wrap it in array
                 fig.suptitle('{0} - {1}'.format(asset.symbol, asset.interval), fontsize=13, y=0.90, c='b')
 
                 plt.autoscale(tight=True)
                 #plt.gcf().autofmt_xdate()  # Beautify the x-labels
 
                 #configure individual axes
-                for ax in axes:
+                for ax in axes_list:
                     self.configure_axes(ax)
 
-                self.draw_ohlc(axes[0] if subplots_count > 1 else axes, asset.klines)
+                self.draw_ohlc(axes_list[0], asset.klines)
                 for indicator_config in indicator_configs:
                     try:
                         indicator_axes = indicator_config['axes']
                         indicator_id = indicator_config['id']
                         if indicator_axes > -1:
-                            self.draw_indicator(indicator_id, axes[indicator_axes], asset.klines, asset.indicators[indicator_id])
+                            self.draw_indicator(indicator_id, axes_list[indicator_axes], asset.klines, asset.indicators[indicator_id])
                     except BaseException as ex:
                         print(f"EXCEPTION: Failed to draw indicators for {asset.symbol}")
                         print(f"Message: {ex}")
