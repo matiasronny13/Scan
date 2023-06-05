@@ -1,5 +1,6 @@
 import datetime
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 import AppConstants
 from Models.Asset import Asset
 import asyncio
@@ -137,12 +138,7 @@ class Yho:
 
             ticksDf = pd.DataFrame(kline["timestamp"])
             ohlcDf = pd.DataFrame(kline["indicators"]["quote"][0], columns=["open", "high", "low", "close", "volume"])
-
-            if self.param['chart']['type'] == AppConstants.CHART_TYPE.HEIKIN_ASHI.name:
-                ohlcDf = Utils.heikin_ashi(ohlcDf)
-
             df = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
-
             df.columns = ["date", "open", "high", "low", "close", "vol"]
 
             # formatting column
@@ -155,6 +151,9 @@ class Yho:
 
             if self.param['query']["interval"] == "4h":
                 df = Utils.convert_to_4hours(df)
+
+            if self.param['chart']['type'] == AppConstants.CHART_TYPE.HEIKIN_ASHI.name:
+                df = Utils.heikin_ashi(df)
 
             df['is_up'] = df.open - df.close <= 0
 
