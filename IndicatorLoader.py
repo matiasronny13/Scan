@@ -6,31 +6,25 @@ import AppConstants
 class IndicatorLoader:
     def __init__(self, param):
         self.param = param
+        self.functions = {
+            AppConstants.INDICATORS.BBANDS.name: self.load_bbands,
+            AppConstants.INDICATORS.MACD.name: self.load_macd,
+            AppConstants.INDICATORS.SAR.name: self.load_sar,
+            AppConstants.INDICATORS.CCI.name: self.load_cci,
+            AppConstants.INDICATORS.OBV.name: self.load_obv,
+            AppConstants.INDICATORS.MA.name: self.moving_average,
+            AppConstants.INDICATORS.FIBONACCI.name: self.fibonacci
+        }
 
     def load_indicators(self, assets):
         indicators = self.param['chart']['indicators']
         for asset in assets:
             for indicator in indicators:
-                indicator_parameter = indicator['parameter']
                 indicator_output = None
-                match indicator['id']:
-                    case AppConstants.INDICATORS.BBANDS.name:
-                        indicator_output = self.load_bbands(asset.klines, indicator_parameter)
-                    case AppConstants.INDICATORS.MACD.name:
-                        indicator_output = self.load_macd(asset.klines, indicator_parameter)
-                    case AppConstants.INDICATORS.SAR.name:
-                        indicator_output = self.load_sar(asset.klines, indicator_parameter)
-                    case AppConstants.INDICATORS.CCI.name:
-                        indicator_output = self.load_cci(asset.klines, indicator_parameter)
-                    case AppConstants.INDICATORS.OBV.name:
-                        indicator_output = self.load_obv(asset.klines, indicator_parameter)
-                    case AppConstants.INDICATORS.MA.name:
-                        indicator_output = self.moving_average(asset.klines, indicator_parameter)
-                    case AppConstants.INDICATORS.FIBONACCI.name:
-                        indicator_output = self.fibonacci(asset.klines, indicator_parameter)
-
+                func = self.functions.get(indicator['id'])
+                if func is not None:
+                    indicator_output = func(asset.klines, indicator['parameter'])
                 asset.indicators.update({indicator['id']: indicator_output})
-
 
     def fibonacci(self, klines, parameter):
         fibonacci_result = []
@@ -85,4 +79,3 @@ class IndicatorLoader:
     def load_obv(self, klines, parameter):
         obv = ta.OBV(klines.close, klines.vol)
         return pd.DataFrame({'real': obv})
-

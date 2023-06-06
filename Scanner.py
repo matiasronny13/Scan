@@ -5,24 +5,20 @@ from AppConstants import INDICATORS
 class Scanner:
     def __init__(self, param):
         self.param = param
+        self.functions = {
+            StrategyCode.ALL_NEGATIVE.name: self.all_negative,
+            StrategyCode.FIB_RETRACE.name: self.fibonacci_retracement
+        }
 
     def scan(self, asset_list):
         strategy = self.param['strategy']
+        executor = self.functions.get(strategy['name'], lambda a, b: True)
+
         for asset in asset_list:
             if len(asset.klines) > 5:
-                match strategy["name"]:
-                    case StrategyCode.ALL_NEGATIVE.name:
-                        asset.is_displayed = self.all_negative(asset, strategy)
-                    case StrategyCode.FIB_RETRACE.name:
-                        asset.is_displayed = self.fibonacci_retracement(asset, strategy)
-                    case _:
-                        asset.is_displayed = self.default(asset, strategy)
-
+                asset.is_displayed = executor(asset, strategy)
                 if asset.is_displayed:
                     print(f"Output => {asset.symbol}")
-
-    def default(self, asset, strategy):
-        return True
 
     def macd_hist_negative(self, asset) -> bool:
         macd_df = asset.indicators[INDICATORS.MACD.name]

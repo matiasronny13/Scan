@@ -11,6 +11,16 @@ from numpy import ndarray
 class Output:
     def __init__(self, param):
         self.param = param
+        self.functions = {
+            INDICATORS.VOLUME.name: self.draw_volume,
+            INDICATORS.BBANDS.name: self.draw_bbands,
+            INDICATORS.MACD.name: self.draw_macd,
+            INDICATORS.SAR.name: self.draw_sar,
+            INDICATORS.CCI.name: self.draw_cci,
+            INDICATORS.OBV.name: self.draw_obv,
+            INDICATORS.FIBONACCI.name: self.draw_fibonacci,
+            INDICATORS.MA.name: self.draw_ma
+        }
         register_matplotlib_converters()
 
     def generate_output(self, all_asset_data):
@@ -55,9 +65,11 @@ class Output:
                 for indicator_config in indicator_configs:
                     try:
                         indicator_axes = indicator_config['axes']
-                        indicator_id = indicator_config['id']
                         if indicator_axes > -1:
-                            self.draw_indicator(indicator_id, axes_list[indicator_axes], asset.klines, asset.indicators[indicator_id])
+                            indicator_id = indicator_config['id']
+                            executor = self.functions.get(indicator_id)
+                            if executor is not None:
+                                executor(axes_list[indicator_axes], asset.klines, asset.indicators[indicator_id])
                     except BaseException as ex:
                         print(f"EXCEPTION: Failed to draw indicators for {asset.symbol}")
                         print(f"Message: {ex}")
@@ -66,25 +78,6 @@ class Output:
                 #plt.show()
                 plt.savefig("./Output/{0}/{1}_{2}.png".format(subdir, asset.interval, asset.symbol.replace("*", "^")))
                 plt.close(fig)
-
-    def draw_indicator(self, indicator_id, ax, klines, indicator):
-        match indicator_id:
-            case INDICATORS.VOLUME.name:
-                self.draw_volume(ax, klines, indicator)
-            case INDICATORS.BBANDS.name:
-                self.draw_bbands(ax, klines, indicator)
-            case INDICATORS.MACD.name:
-                self.draw_macd(ax, klines, indicator)
-            case INDICATORS.SAR.name:
-                self.draw_sar(ax, klines, indicator)
-            case INDICATORS.CCI.name:
-                self.draw_cci(ax, klines, indicator)
-            case INDICATORS.OBV.name:
-                self.draw_obv(ax, klines, indicator)
-            case INDICATORS.FIBONACCI.name:
-                self.draw_fibonacci(ax, klines, indicator)
-            case INDICATORS.MA.name:
-                self.draw_ma(ax, klines, indicator)
 
     def configure_axes(self, axes):
         #axes.xaxis_date()
