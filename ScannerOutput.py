@@ -19,6 +19,7 @@ class Output:
             INDICATORS.CCI.name: self.draw_cci,
             INDICATORS.OBV.name: self.draw_obv,
             INDICATORS.FIBONACCI.name: self.draw_fibonacci,
+            INDICATORS.EMA.name: self.draw_ma,
             INDICATORS.MA.name: self.draw_ma
         }
         register_matplotlib_converters()

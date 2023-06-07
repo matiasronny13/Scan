@@ -6,15 +6,15 @@
   },
   "query": {
     "pageSize": 200,
-    "screener-": {"size":25,"offset":0,"sortField":"intradaymarketcap","sortType":"DESC","quoteType":"EQUITY","topOperator":"AND","query":{"operator":"AND","operands":[{"operator":"or","operands":[{"operator":"EQ","operands":["region","us"]}]},{"operator":"or","operands":[{"operator":"GT","operands":["intradaymarketcap",100000000000]},{"operator":"BTWN","operands":["intradaymarketcap",10000000000,100000000000]}]},{"operator":"or","operands":[{"operator":"EQ","operands":["sector","Basic Materials"]},{"operator":"EQ","operands":["sector","Financial Services"]}]}]},"userId":"LBN4RWSHROJUA6LD7HTCA3NSCA","userIdType":"guid"},
-    "symbols": [ "PYPL"],
+    "screener-": {"size":25,"offset":0,"sortField":"intradaymarketcap","sortType":"DESC","quoteType":"EQUITY","topOperator":"AND","query":{"operator":"AND","operands":[{"operator":"or","operands":[{"operator":"EQ","operands":["region","id"]}]},{"operator":"or","operands":[{"operator":"GT","operands":["intradaymarketcap",100000000000]},{"operator":"BTWN","operands":["intradaymarketcap",10000000000,100000000000]}]},{"operator":"gt","operands":["intradayprice",100]},{"operator":"gt","operands":["dayvolume",10000]}]},"userId":"","userIdType":"guid"},
+    "symbols": [ "GOOG"],
     "interval": "1wk"
   },
   "chart": {
     "type": "CANDLESTICK",
     "indicators": [
       {
-          "id": "MA",
+          "id": "EMA",
           "axes": 0,
           "parameter": {
             "fast": 50,
@@ -70,11 +70,11 @@
       }
     ]
   },
-  "strategy": {
+  "strategy-": {
     "name": "ALL_NEGATIVE"
   },
-  "strategy1": {
+  "strategy": {
     "name": "FIB_RETRACE",
-    "fibonacciLevel": 2
+    "fibonacciLevel": 6
   }
 }

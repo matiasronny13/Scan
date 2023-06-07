@@ -13,6 +13,7 @@ class IndicatorLoader:
             AppConstants.INDICATORS.CCI.name: self.load_cci,
             AppConstants.INDICATORS.OBV.name: self.load_obv,
             AppConstants.INDICATORS.MA.name: self.moving_average,
+            AppConstants.INDICATORS.EMA.name: self.exponential_moving_average,
             AppConstants.INDICATORS.FIBONACCI.name: self.fibonacci
         }
 
@@ -53,6 +54,12 @@ class IndicatorLoader:
                 elif fib_direction == "up":
                     fibonacci_result.append({"price": lowest_bar.low + fib_index[idx] * diff, "percent": fib_index[idx], "color": fib_colors[idx]})
             return fibonacci_result
+
+    def exponential_moving_average(self, klines, parameter):
+        fast = ta.EMA(klines.close, timeperiod=parameter['fast'])
+        medium = ta.EMA(klines.close, timeperiod=parameter['medium'])
+        long = ta.EMA(klines.close, timeperiod=parameter['long'])
+        return pd.DataFrame({'fast': fast, 'medium': medium, 'long': long})
 
     def moving_average(self, klines, parameter):
         fast = ta.MA(klines.close, timeperiod=parameter['fast'], matype=0)
