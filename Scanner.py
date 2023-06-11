@@ -23,7 +23,7 @@ class Scanner:
 
     def vwap_rev(self, asset, strategy) -> bool:
         vwap_df = asset.indicators[INDICATORS.VWAP.name]
-        if asset.klines.iloc[-2].high < asset.klines.iloc[-1].high < vwap_df.iloc[-1, 0]:
+        if asset.klines.iloc[-3].high < asset.klines.iloc[-1].high < vwap_df.iloc[-1, 0]:
              return True
 
     def macd_hist_negative(self, asset) -> bool:
