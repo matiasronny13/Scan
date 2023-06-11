@@ -20,7 +20,8 @@ class Output:
             INDICATORS.OBV.name: self.draw_obv,
             INDICATORS.FIBONACCI.name: self.draw_fibonacci,
             INDICATORS.EMA.name: self.draw_ma,
-            INDICATORS.MA.name: self.draw_ma
+            INDICATORS.MA.name: self.draw_ma,
+            INDICATORS.VWAP.name: self.draw_vwap
         }
         register_matplotlib_converters()
 
@@ -114,6 +115,10 @@ class Output:
 
     def draw_sar(self, ax, klines, indicator):
         ax.plot(klines.index, indicator.real, 'b.', alpha=1, markersize=3)
+
+    def draw_vwap(self, ax, klines, indicator):
+        for col in indicator:
+            ax.plot(klines.index, indicator[col], zorder=0)
 
     def draw_ma(self, ax, klines, indicator):
         ax.plot(klines.index, indicator.fast)

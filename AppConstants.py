@@ -20,7 +20,8 @@ class StrategyCode(Enum):
     SAR_REV_BEAR = 12,
     GAP = 13,
     ALL_NEGATIVE = 14,
-    FIB_RETRACE = 15
+    FIB_RETRACE = 15,
+    VWAP_REV = 16
 
 
 class INDICATORS(Enum):
@@ -40,7 +41,8 @@ class INDICATORS(Enum):
     OBV = 14,
     SPRS = 15,
     MA = 16,
-    FIBONACCI = 17
+    FIBONACCI = 17,
+    VWAP = 18
 
 
 class CHART_TYPE(Enum):

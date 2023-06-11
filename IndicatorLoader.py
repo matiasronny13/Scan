@@ -1,5 +1,6 @@
 import talib as ta
 import pandas as pd
+from pandas_ta import volume as pd_ta
 import AppConstants
 
 
@@ -14,7 +15,8 @@ class IndicatorLoader:
             AppConstants.INDICATORS.OBV.name: self.load_obv,
             AppConstants.INDICATORS.MA.name: self.moving_average,
             AppConstants.INDICATORS.EMA.name: self.exponential_moving_average,
-            AppConstants.INDICATORS.FIBONACCI.name: self.fibonacci
+            AppConstants.INDICATORS.FIBONACCI.name: self.fibonacci,
+            AppConstants.INDICATORS.VWAP.name: self.vwap
         }
 
     def load_indicators(self, assets):
@@ -54,6 +56,17 @@ class IndicatorLoader:
                 elif fib_direction == "up":
                     fibonacci_result.append({"price": lowest_bar.low + fib_index[idx] * diff, "percent": fib_index[idx], "color": fib_colors[idx]})
             return fibonacci_result
+
+    def vwap(self, klines, parameter):
+        df = klines.copy()
+        df.index = pd.to_datetime(df.date)
+        df = pd_ta.vwap(high=df.high, low=df.low, close=df.close,
+                          volume=df.vol, anchor=parameter['anchor'],
+                          bands=parameter['bands'], offset=None, )
+
+        df.reset_index(inplace=True)
+        df = df.drop(columns=['date'])
+        return df
 
     def exponential_moving_average(self, klines, parameter):
         fast = ta.EMA(klines.close, timeperiod=parameter['fast'])

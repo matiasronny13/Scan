@@ -23,20 +23,11 @@
           }
       },
       {
-          "id": "FIBONACCI",
+          "id": "VWAP",
           "axes": 0,
           "parameter": {
-            "barCount": 100,
-            "direction": "up"
-          }
-      },
-      {
-          "id": "BBANDS",
-          "axes": 0,
-          "parameter": {
-            "timeperiod": 21,
-            "nbdevup": 2,
-            "nbdevdn": 2
+            "anchor": "Y",
+            "bands": [1.14]
           }
       },
       {
@@ -45,13 +36,6 @@
           "parameter": {
             "acceleration": 0.02,
             "maximum": 0.2
-          }
-      },
-      {
-          "id": "CCI",
-          "axes": -1,
-          "parameter": {
-            "timeperiod": 20
           }
       },
       {
@@ -70,10 +54,10 @@
       }
     ]
   },
-  "strategy-": {
-    "name": "ALL_NEGATIVE"
-  },
   "strategy": {
+    "name": ""
+  },
+  "strategy-": {
     "name": "FIB_RETRACE",
     "fibonacciLevel": 6
   }

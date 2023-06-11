@@ -7,7 +7,8 @@ class Scanner:
         self.param = param
         self.functions = {
             StrategyCode.ALL_NEGATIVE.name: self.all_negative,
-            StrategyCode.FIB_RETRACE.name: self.fibonacci_retracement
+            StrategyCode.FIB_RETRACE.name: self.fibonacci_retracement,
+            StrategyCode.VWAP_REV.name: self.vwap_rev
         }
 
     def scan(self, asset_list):
@@ -19,6 +20,11 @@ class Scanner:
                 asset.is_displayed = executor(asset, strategy)
                 if asset.is_displayed:
                     print(f"Output => {asset.symbol}")
+
+    def vwap_rev(self, asset, strategy) -> bool:
+        vwap_df = asset.indicators[INDICATORS.VWAP.name]
+        if asset.klines.iloc[-2].high < asset.klines.iloc[-1].high < vwap_df.iloc[-1, 0]:
+             return True
 
     def macd_hist_negative(self, asset) -> bool:
         macd_df = asset.indicators[INDICATORS.MACD.name]

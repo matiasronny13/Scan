@@ -1,0 +1,91 @@
+{
+  "exchange": {
+    "name": "yho",
+    "crumb": "zLOfpMfXuND",
+    "cookie": "A3=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo; A1=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo; tbla_id=de0824ec-59de-4d21-9a6a-a3fab6867e1c-tuctb4a5903; B=6oj4tsdi51krt&b=3&s=cr; GUC=AQEBAQFkUiRkWkIf2QSv; PRF=newChartbetateaser%3D0%252C1684228285315%26t%3DYM%253DF; A1S=d=AQABBH3TUGQCEFGkguCQ_KlheNauIOOdTGwFEgEBAQEkUmRaZFr0yiMA_eMAAA&S=AQAAAjSmW9VFT11bcZpmA1LdrPo&j=WORLD; cmp=t=1683026674&j=0&u=1---"
+  },
+  "query": {
+    "pageSize": 200,
+    "screener-": {"size":25,"offset":0,"sortField":"intradaymarketcap","sortType":"DESC","quoteType":"EQUITY","topOperator":"AND","query":{"operator":"AND","operands":[{"operator":"or","operands":[{"operator":"EQ","operands":["region","id"]}]},{"operator":"or","operands":[{"operator":"GT","operands":["intradaymarketcap",100000000000]},{"operator":"BTWN","operands":["intradaymarketcap",10000000000,100000000000]}]},{"operator":"gt","operands":["intradayprice",100]},{"operator":"gt","operands":["dayvolume",10000]}]},"userId":"","userIdType":"guid"},
+    "symbols": [ "GOOG"],
+    "interval": "1wk"
+  },
+  "chart": {
+    "type": "CANDLESTICK",
+    "indicators": [
+      {
+          "id": "EMA",
+          "axes": 0,
+          "parameter": {
+            "fast": 50,
+            "medium": 100,
+            "long": 200
+          }
+      },
+      {
+          "id": "VWAP",
+          "axes": 0,
+          "parameter": {
+            "anchor": "M",
+            "bands": [1.14]
+          }
+      },
+      {
+          "id": "FIBONACCI",
+          "axes": 0,
+          "parameter": {
+            "barCount": 100,
+            "direction": "up"
+          }
+      },
+      {
+          "id": "BBANDS",
+          "axes": 0,
+          "parameter": {
+            "timeperiod": 21,
+            "nbdevup": 2,
+            "nbdevdn": 2
+          }
+      },
+      {
+          "id": "SAR",
+          "axes": 0,
+          "parameter": {
+            "acceleration": 0.02,
+            "maximum": 0.2
+          }
+      },
+      {
+          "id": "CCI",
+          "axes": -1,
+          "parameter": {
+            "timeperiod": 20
+          }
+      },
+      {
+          "id": "MACD",
+          "axes": 1,
+          "parameter": {
+            "fastperiod": 12,
+            "slowperiod": 26,
+            "signalperiod": 9
+          }
+      },
+      {
+          "id": "OBV",
+          "axes": 2,
+          "parameter": {}
+      }
+    ]
+  },
+  "strategy": {
+    "name": "ALL_NEGATIVE"
+  },
+  "strategy": {
+    "name": "VWAP_REV"
+  },
+  "strategy": {
+    "name": "FIB_RETRACE",
+    "fibonacciLevel": 6
+  }
+}
