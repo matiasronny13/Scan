@@ -1,5 +1,4 @@
 import json
-import Exchanges.Bnb as bnb
 import Exchanges.Yho as Yho
 from Scanner import Scanner
 from ScannerOutput import Output
@@ -14,10 +13,7 @@ class ChartScanner:
             input_config = json.load(f)
 
         # set exchange
-        if input_config['exchange']['name'] == 'bnb':
-            exchange = bnb.Bnb()
-        elif input_config['exchange']['name'] == 'yho':
-            exchange = Yho.Yho(input_config)
+        exchange = Yho.Yho(input_config)
 
         all_asset_data = exchange.get_all_dataframe()
 
