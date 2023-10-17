@@ -1,6 +1,6 @@
 import datetime
-
 import pandas as pd
+pd.options.mode.chained_assignment = None  # default='warn'
 import AppConstants
 from Models.Asset import Asset
 import asyncio
@@ -17,9 +17,9 @@ class Yho:
     # region screener
     def get_total_screener(self):
         response = httpx.post(f"https://query2.finance.yahoo.com/v1/finance/screener/total",
-                              params={"crumb": self.param["Crumb"]},
-                              headers={"content-type": "application/json", "cookie": self.param["Cookie"]},
-                              data=json.dumps(self.param["Screener"]))
+                              params={"crumb": self.param['exchange']["crumb"]},
+                              headers={"content-type": "application/json", "cookie": self.param['exchange']["cookie"]},
+                              data=json.dumps(self.param['query']["screener"]))
 
         if response.status_code == 200:
             total = int(response.json()["finance"]["result"][0]["total"])
@@ -38,10 +38,10 @@ class Yho:
                 print(f"Screener error: {response_json['finance']['error']['description']}")
                 return None
     async def loop_screener_page(self, offsets):
-        async with ClientSession(headers={"content-type": "application/json", "cookie": self.param["Cookie"]}) as session:
-            url = f"https://query1.finance.yahoo.com/v1/finance/screener?crumb={self.param['Crumb']}"
-            payload = self.param["Screener"]
-            payload["size"] = self.param["PageSize"]
+        async with ClientSession(headers={"content-type": "application/json", "cookie": self.param['exchange']["cookie"]}) as session:
+            url = f"https://query1.finance.yahoo.com/v1/finance/screener?crumb={self.param['exchange']['crumb']}"
+            payload = self.param['query']["screener"]
+            payload["size"] = self.param['query']["pageSize"]
             tasks = []
 
             for offset in offsets:
@@ -63,7 +63,7 @@ class Yho:
                     print("Scan aborted")
                     return []
 
-            page_size = self.param["PageSize"]
+            page_size = self.param['query']["pageSize"]
             print(f"Fetching {result_count} symbols with page size of {page_size}")
             offsets = range(0, result_count, page_size)
             loop = asyncio.get_event_loop()
@@ -72,7 +72,7 @@ class Yho:
 
     #region historical
     def get_url(self, symbol):
-        interval = self.param["Interval"]
+        interval = self.param['query']["interval"]
         interval_url = "1h" if interval == "4h" else interval   #change 4h to 1h as workaround
         url = f"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval={interval_url}&includePrePost=false"
 
@@ -108,7 +108,7 @@ class Yho:
             else:
                 print(f"get_ticks error: {response_json['chart']['error']['description']}")
     async def loop_historical_data(self, symbols):
-        async with ClientSession(headers={"content-type": "application/json", "cookie": self.param["Cookie"]}) as session:
+        async with ClientSession(headers={"content-type": "application/json", "cookie": self.param['exchange']["cookie"]}) as session:
             tasks = []
             for symbol in symbols:
                 task = asyncio.ensure_future(self.get_ticks(session, self.get_url(symbol)))
@@ -121,26 +121,24 @@ class Yho:
 
     def get_all_dataframe(self):
         result = []
+        all_symbols = []
 
-        if self.param.__contains__('Symbols') and isinstance(self.param['Symbols'], list) and len(self.param['Symbols']) > 0:
-            allSymbols = self.param['Symbols']
-        elif self.param.__contains__('Screener') and self.param['Screener'] is not None:
-            allSymbols = self.get_from_screener()
+        if 'symbols' in self.param['query'] and len(self.param['query']['symbols']) > 0:
+            all_symbols = self.param['query']['symbols']
+        elif 'screener' in self.param['query'] and self.param['query']['screener'] is not None:
+            all_symbols = self.get_from_screener()
 
-        allKlines = self.get_historical_data(allSymbols)
+        all_klines = self.get_historical_data(all_symbols)
 
-        for klines in allKlines:
-            if klines is None:
+        for kline in all_klines:
+            if kline is None:
                 continue
 
-            klineSymbol = klines["meta"]["symbol"]
+            klineSymbol = kline["meta"]["symbol"]
 
-            ticksDf = pd.DataFrame(klines["timestamp"])
-            ohlcDf = pd.DataFrame(klines["indicators"]["quote"][0], columns=["open", "high", "low", "close", "volume"])
-            if self.param["ChartType"] == AppConstants.CHART_TYPE.HEIKIN_ASHI.name:
-                ohlcDf = Utils.heikin_ashi(ohlcDf)
+            ticksDf = pd.DataFrame(kline["timestamp"])
+            ohlcDf = pd.DataFrame(kline["indicators"]["quote"][0], columns=["open", "high", "low", "close", "volume"])
             df = ticksDf.join(ohlcDf, lsuffix="_left", rsuffix="_right", how="left")
-
             df.columns = ["date", "open", "high", "low", "close", "vol"]
 
             # formatting column
@@ -151,15 +149,18 @@ class Yho:
             df.close = df.close.astype(float)
             df.vol = df.vol.astype(float)
 
-            if self.param["Interval"] == "4h":
+            if self.param['query']["interval"] == "4h":
                 df = Utils.convert_to_4hours(df)
+
+            if self.param['chart']['type'] == AppConstants.CHART_TYPE.HEIKIN_ASHI.name:
+                df = Utils.heikin_ashi(df)
 
             df['is_up'] = df.open - df.close <= 0
 
             df.reset_index(inplace=True)
             df['index'] = df.index
 
-            asset = Asset(klineSymbol, df, self.param['Interval'])
+            asset = Asset(klineSymbol, df, self.param['query']['interval'])
             result.append(asset)
 
         return result
